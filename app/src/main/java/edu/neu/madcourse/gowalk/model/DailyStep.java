@@ -67,4 +67,10 @@ public class DailyStep {
     public void setId(int id) {
         this.id = id;
     }
+
+    //for testing
+    @Override
+    public String toString() {
+        return this.date.toString() + " "+this.stepCount;
+    }
 }

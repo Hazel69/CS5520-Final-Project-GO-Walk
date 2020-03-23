@@ -2,7 +2,6 @@ package edu.neu.madcourse.gowalk.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "rewards")
@@ -30,7 +29,6 @@ public class Reward {
         this.points = points;
 //        this.userId = userId;
     }
-
 
     public String getDescription() {
         return description;
@@ -71,4 +69,11 @@ public class Reward {
 //    public void setUserId(int userId) {
 //        this.userId = userId;
 //    }
+
+    //for testing
+    @NonNull
+    @Override
+    public String toString() {
+        return this.name + " " + this.points;
+    }
 }
