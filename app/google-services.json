@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "125394495165",
+    "firebase_url": "https://go-walk.firebaseio.com",
+    "project_id": "go-walk",
+    "storage_bucket": "go-walk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125394495165:android:0d47158fa14980fb60b9d4",
+        "android_client_info": {
+          "package_name": "edu.neu.madcourse.gowalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "125394495165-q0d40jjiqe780g2aokotp90ummf2gl5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7jTdK7KTF08FDchZKyVZEs1IFDO4clEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "125394495165-q0d40jjiqe780g2aokotp90ummf2gl5e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
