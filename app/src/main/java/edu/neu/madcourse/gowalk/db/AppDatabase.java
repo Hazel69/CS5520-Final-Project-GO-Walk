@@ -11,9 +11,8 @@ import edu.neu.madcourse.gowalk.dao.DailyStepDao;
 import edu.neu.madcourse.gowalk.dao.RewardDao;
 import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.model.Reward;
-import edu.neu.madcourse.gowalk.model.User;
 
-@Database(entities = {User.class, Reward.class, DailyStep.class}, version = 1)
+@Database(entities = {Reward.class, DailyStep.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 

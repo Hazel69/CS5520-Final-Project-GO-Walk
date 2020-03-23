@@ -9,4 +9,34 @@
         android:text="GO!Walk">
     </TextView>
 
+    <Button
+        android:id="@+id/add_reward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add reward">
+    </Button>
+
+    <Button
+        android:id="@+id/delete_reward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete reward">
+    </Button>
+
+    <Button
+        android:id="@+id/add_daily_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add reward">
+    </Button>
+
+    <Button
+        android:id="@+id/get_daily_steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get daily steps">
+    </Button>
+
+
+
 </LinearLayout>

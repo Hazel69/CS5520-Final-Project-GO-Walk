@@ -45,6 +45,7 @@ public class RewardRepository {
         @Override
         protected Void doInBackground(Reward... Rewards) {
             rewardDao.insertReward(Rewards[0]);
+            System.out.println("print");
             return null;
         }
     }
