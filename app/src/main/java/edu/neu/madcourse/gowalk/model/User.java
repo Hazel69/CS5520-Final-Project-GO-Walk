@@ -49,4 +49,12 @@ public class User {
     public void setPointsGainedPerGoal(int pointsGainedPerGoal) {
         this.pointsGainedPerGoal = pointsGainedPerGoal;
     }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 }

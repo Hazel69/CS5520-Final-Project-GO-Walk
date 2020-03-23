@@ -55,4 +55,12 @@ public class DailyStep {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
