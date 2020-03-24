@@ -1,5 +1,7 @@
 package edu.neu.madcourse.gowalk.model;
 
+import androidx.annotation.NonNull;
+
 public class DailyStepF {
     private String date;
     private int stepCount;
@@ -45,5 +47,11 @@ public class DailyStepF {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return String.format("%s on %s: %d steps", username, date, stepCount);
     }
 }

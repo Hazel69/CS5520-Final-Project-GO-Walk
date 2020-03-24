@@ -37,5 +37,12 @@
         android:onClick="directToReport"
         android:text="Test Firebase" />
 
+    <Button
+        android:id="@+id/dailyRankBtn"
+        android:layout_width="162dp"
+        android:layout_height="35dp"
+        android:onClick="directToDailyRanking"
+        android:text="Daily Ranking" />
+
 
 </LinearLayout>

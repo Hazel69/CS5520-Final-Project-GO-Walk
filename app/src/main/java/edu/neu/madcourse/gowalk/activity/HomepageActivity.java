@@ -56,4 +56,9 @@ public class HomepageActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ReportActivity.class);
         startActivity(intent);
     }
+
+    public void directToDailyRanking(View view) {
+        Intent intent = new Intent(this, DailyRankActivity.class);
+        startActivity(intent);
+    }
 }
