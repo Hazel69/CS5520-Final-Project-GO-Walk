@@ -30,5 +30,12 @@
         android:text="Add daily step">
     </Button>
 
+    <Button
+        android:id="@+id/testFdbBtn"
+        android:layout_width="224dp"
+        android:layout_height="36dp"
+        android:onClick="directToReport"
+        android:text="Test Firebase" />
+
 
 </LinearLayout>

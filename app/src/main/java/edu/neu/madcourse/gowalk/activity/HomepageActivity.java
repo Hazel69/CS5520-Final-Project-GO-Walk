@@ -1,6 +1,9 @@
 package edu.neu.madcourse.gowalk.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -47,6 +50,10 @@ public class HomepageActivity extends AppCompatActivity {
         dailyStepViewModel.getDailyStepRecords().observe(this, dailySteps ->
                 System.out.println(Arrays.toString(dailySteps.toArray())));
 
+    }
 
+    public void directToReport(View view) {
+        Intent intent = new Intent(this, ReportActivity.class);
+        startActivity(intent);
     }
 }
