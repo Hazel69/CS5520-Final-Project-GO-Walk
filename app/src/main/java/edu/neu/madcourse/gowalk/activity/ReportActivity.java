@@ -1,4 +1,4 @@
-package edu.neu.madcourse.gowalk;
+package edu.neu.madcourse.gowalk.activity;
 
 import android.os.Bundle;
 
@@ -20,6 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
+import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.model.DailyStepF;
 
 public class ReportActivity extends AppCompatActivity {
@@ -30,6 +34,9 @@ public class ReportActivity extends AppCompatActivity {
     private Button updateStepsBtn;
     private TextView dailyStepView;
     private EditText stepsEditText;
+    private String userId = "1";
+    private String username = "ben";
+    private String msg = "%s on %s: %d steps!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +54,8 @@ public class ReportActivity extends AppCompatActivity {
             }
         });
 
-        stepDatabase = FirebaseDatabase.getInstance().getReference().child("dailySteps");
+        stepDatabase = FirebaseDatabase.getInstance().getReference()
+                .child("dailySteps");
         updateStepsBtn = findViewById(R.id.updateDS);
         dailyStepView = findViewById(R.id.dailySteps);
         stepsEditText = findViewById(R.id.editText);
@@ -55,7 +63,7 @@ public class ReportActivity extends AppCompatActivity {
         updateStepsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateStep("zBo3SX3GUP426sjhBLQV");
+                updateStep(userId, username);
             }
         });
 
@@ -63,7 +71,10 @@ public class ReportActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DailyStepF step = dataSnapshot.getValue(DailyStepF.class);
-                dailyStepView.setText(step.getUsername() + " on " + step.getDate() + ": " + step.getStepCount());
+                if (step == null) {
+                    return;
+                }
+                dailyStepView.setText(String.format(msg, step.getUsername(), step.getDate(), step.getStepCount()));
             }
 
             @Override
@@ -72,17 +83,19 @@ public class ReportActivity extends AppCompatActivity {
             }
         };
 
-        stepDatabase.addValueEventListener(stepListener);
+        stepDatabase.child(LocalDate.now().toString()).child(userId).addValueEventListener(stepListener);
     }
 
-    private void updateStep(String id) {
-        final String steps = stepsEditText.getText().toString();
-
-        if (steps.isEmpty()) {
+    private void updateStep(String userId, String username) {
+        int steps = 0;
+        try {
+            steps = Integer.parseInt(stepsEditText.getText().toString());
+        } catch (NumberFormatException e) {
             return;
         }
 
-        stepDatabase.child(id).child("steps").setValue(steps);
+        DailyStepF dailyStepF = new DailyStepF(userId, username, LocalDate.now().toString(), steps);
+        stepDatabase.child(LocalDate.now().toString()).child(userId).setValue(dailyStepF);
     }
 
 

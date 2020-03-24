@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ReportActivity"
+    tools:context=".activity.ReportActivity"
     tools:showIn="@layout/activity_report">
 
     <Button
@@ -36,7 +36,6 @@
         android:ems="10"
         android:hint="@string/steps"
         android:inputType="number"
-        android:labelFor="Enter steps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -1,39 +1,25 @@
 package edu.neu.madcourse.gowalk.model;
 
-
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import com.google.firebase.database.IgnoreExtraProperties;
-
-import java.time.LocalDate;
-
-@Entity(tableName = "dailySteps")
-@IgnoreExtraProperties
 public class DailyStepF {
-
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    private int id;
-    private LocalDate date;
+    private String date;
     private int stepCount;
-    private int userId;
+    private String userId;
     private String username;
 
     public DailyStepF() {}
 
-    public DailyStepF(LocalDate date, int stepCount, int userId) {
+    public DailyStepF(String userId, String username, String date, int stepCount) {
         this.date = date;
         this.stepCount = stepCount;
         this.userId = userId;
+        this.username = username;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -45,20 +31,12 @@ public class DailyStepF {
         this.stepCount = stepCount;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {
