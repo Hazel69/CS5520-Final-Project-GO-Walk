@@ -26,8 +26,11 @@
 
     <TextView
         android:id="@+id/dailyRankUserName"
-        android:layout_width="109dp"
-        android:layout_height="29dp"
+        android:layout_width="120dp"
+        android:layout_height="28dp"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/dailyRankStepCount"
         app:layout_constraintStart_toEndOf="@+id/dailyRank"
@@ -36,8 +39,11 @@
 
     <TextView
         android:id="@+id/dailyRankStepCount"
-        android:layout_width="109dp"
-        android:layout_height="29dp"
+        android:layout_width="100dp"
+        android:layout_height="28dp"
+        android:maxLines="1"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.757"

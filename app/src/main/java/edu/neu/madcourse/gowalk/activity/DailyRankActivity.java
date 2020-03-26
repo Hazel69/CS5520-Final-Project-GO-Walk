@@ -29,7 +29,6 @@ public class DailyRankActivity extends AppCompatActivity {
 
         dailyRankViewModel =  ViewModelProviders.of(this).get(DailyRankViewModel.class);
         dailyRankViewModel.getDailyRankListLiveData().observe(this, mDailySteps -> {
-            System.out.println(Arrays.toString(mDailySteps.toArray()));
             recyclerView.setAdapter(new DailyRankingAdapter(mDailySteps));
         });
     }
