@@ -31,11 +31,12 @@ public class ReportActivity extends AppCompatActivity {
     private static final String TAG = "REPORT_ACTIVITY";
     private DatabaseReference stepDatabase;
 
+    // TODO: This is for testing use
     private Button updateStepsBtn;
     private TextView dailyStepView;
     private EditText stepsEditText;
-    private String userId = "1";
-    private String username = "ben";
+    private String userId = "3";
+    private String username = "andrew";
     private String msg = "%s on %s: %d steps!";
 
     @Override
