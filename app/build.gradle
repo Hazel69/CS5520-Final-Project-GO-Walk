@@ -28,7 +28,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
@@ -48,8 +48,8 @@ dependencies {
 
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
-
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
-
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
 }
