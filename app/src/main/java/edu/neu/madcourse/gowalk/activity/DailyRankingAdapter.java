@@ -29,14 +29,11 @@ public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapte
 
     @Override
     public void onBindViewHolder(@NonNull DailyRankingAdapter.ItemViewHolder holder, int position) {
-        DailyStepF target = dailyRankList.get(position);
-        System.out.println(target);
         if (dailyRankList != null && !dailyRankList.isEmpty()) {
-            target = dailyRankList.get(position);
-            System.out.println(target);
-            holder.rankView.setText(position + "");
+            DailyStepF target = dailyRankList.get(position);
+            holder.rankView.setText(Integer.toString(position + 1));
             holder.usernameView.setText(target.getUsername());
-            holder.stepCountView.setText(target.getStepCount() + "");
+            holder.stepCountView.setText(Integer.toString(target.getStepCount()));
         }
     }
 
