@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -44,5 +45,11 @@
         android:onClick="directToDailyRanking"
         android:text="Daily Ranking" />
 
+    <fragment
+        android:id="@+id/fragment"
+        android:name="edu.neu.madcourse.gowalk.activity.RecordCollectionFragment"
+        android:layout_width="match_parent"
+        android:layout_height="491dp"
+        tools:layout="@layout/fragment_record_collection" />
 
 </LinearLayout>
