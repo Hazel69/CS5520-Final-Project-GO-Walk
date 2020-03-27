@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.model.DailyStep;
+import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
@@ -35,7 +37,7 @@ public class RecordsFragment extends Fragment {
     private ColumnChartData columnChartData;
     private boolean hasAxes = true;
     private boolean hasLabels = true;
-    private boolean hasLabelForSelected = true;
+    private boolean hasLabelForSelected = false;
     private static final String[] DAYS = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
     private static final String[] HOURS = {"12 AM", "6 AM", "12 PM", "6 PM"};
     //TODO: this is just for testing, need to remove after integrating with live data
@@ -81,6 +83,8 @@ public class RecordsFragment extends Fragment {
 
     private void generateWeeklyColumnData(List<DailyStep> data) {
         int numColumns = data.size();
+        int numSubColumns = 1;
+
         List<AxisValue> xAxisValues = new ArrayList<>();
         List<Column> columns = new ArrayList<>();
         List<SubcolumnValue> values;
@@ -88,10 +92,11 @@ public class RecordsFragment extends Fragment {
 
         for (int i = 0; i < numColumns; i++) {
             values = new ArrayList<>();
-            values.add(new SubcolumnValue(data.get(i).getStepCount(), ChartUtils.pickColor()));
+            for (int j = 0; j < numSubColumns; j++) {
+                values.add(new SubcolumnValue(data.get(i).getStepCount(), ChartUtils.pickColor()));
+            }
             calendar.setTime(data.get(i).getDate());
             xAxisValues.add(new AxisValue(i).setLabel(DAYS[calendar.get(Calendar.DAY_OF_WEEK) - 1]));
-            System.out.println(DAYS[calendar.get(Calendar.DAY_OF_WEEK) - 1]);
             Column column = new Column(values);
             column.setHasLabels(hasLabels);
             column.setHasLabelsOnlyForSelected(hasLabelForSelected);
@@ -101,16 +106,10 @@ public class RecordsFragment extends Fragment {
         columnChartData = new ColumnChartData(columns);
 
         if (hasAxes) {
-            Axis axisX = new Axis();
-            axisX.setTextSize(10);
-            axisX.setMaxLabelChars(8);
-            axisX.setTextColor(Color.BLUE);
-            axisX.setValues(xAxisValues);
-//            axisX.setHasLines(true);
-            columnChartData.setAxisXBottom(axisX);
-            Axis axisY = new Axis();
-            axisY.setTextColor(Color.BLUE);
-            columnChartData.setAxisYLeft(axisY);
+            columnChartData.setAxisXBottom(new Axis(xAxisValues)
+                    .setHasLines(true).setTextSize(11).setMaxLabelChars(3).setTextColor(Color.BLACK));
+            columnChartData.setAxisYLeft(new Axis().
+                    setTextSize(11).setMaxLabelChars(5).setTextColor(Color.BLACK));
         } else {
             columnChartData.setAxisXBottom(null);
             columnChartData.setAxisYLeft(null);
