@@ -12,7 +12,7 @@
         <activity
             android:name=".activity.DailyRankActivity"
             android:label="@string/title_activity_daily_rank"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ReportActivity"
             android:theme="@style/AppTheme.NoActionBar" />

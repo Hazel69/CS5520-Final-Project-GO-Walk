@@ -4,4 +4,7 @@
     <string name="update_steps">Update</string>
     <string name="steps">Steps</string>
     <string name="title_activity_daily_rank">DailyRankActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

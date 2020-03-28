@@ -14,16 +14,28 @@ import edu.neu.madcourse.gowalk.model.DailyStep;
 public class DailyStepRepository {
 
     private LiveData<List<DailyStep>> allDailySteps;
+    private LiveData<List<DailyStep>> weeklyDailySteps;
+    private LiveData<List<DailyStep>> monthlyDailySteps;
     private DailyStepDao dailyStepDao;
 
     public DailyStepRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         dailyStepDao = db.dailyStepDao();
         this.allDailySteps = this.dailyStepDao.getAllDailySteps();
+        this.weeklyDailySteps = this.dailyStepDao.getWeeklySteps();
+        this.monthlyDailySteps = this.dailyStepDao.getMonthlySteps();
     }
 
     public LiveData<List<DailyStep>> getAllDailySteps() {
         return this.allDailySteps;
+    }
+
+    public LiveData<List<DailyStep>> getWeeklyDailySteps() {
+        return this.weeklyDailySteps;
+    }
+
+    public LiveData<List<DailyStep>> getMonthlyDailySteps() {
+        return this.monthlyDailySteps;
     }
 
     public void insertDailyStep(DailyStep dailyStep) {
