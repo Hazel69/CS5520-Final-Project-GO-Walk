@@ -38,16 +38,31 @@ public class RecordsFragment extends Fragment {
     private boolean hasAxes = true;
     private boolean hasLabels = true;
     private boolean hasLabelForSelected = false;
-    private static final String[] DAYS = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+    private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
     private static final String[] HOURS = {"12 AM", "6 AM", "12 PM", "6 PM"};
+
+    private DailyStepViewModel dailyStepViewModel;
+
     //TODO: this is just for testing, need to remove after integrating with live data
-    private static final List<DailyStep> weeklyData = Arrays.asList(new DailyStep(Date.valueOf("2020-03-20"), 10000),
-            new DailyStep(Date.valueOf("2020-03-21"), 6000),
-            new DailyStep(Date.valueOf("2020-03-22"), 5000),
-            new DailyStep(Date.valueOf("2020-03-23"), 7000),
-            new DailyStep(Date.valueOf("2020-03-24"), 1000),
-            new DailyStep(Date.valueOf("2020-03-25"), 10000),
-            new DailyStep(Date.valueOf("2020-03-26"), 8000));
+    private static final List<DailyStep> weeklyData = Arrays.asList(new DailyStep(Date.valueOf("2020-03-22"), 10000),
+            new DailyStep(Date.valueOf("2020-03-23"), 6000),
+            new DailyStep(Date.valueOf("2020-03-24"), 5000),
+            new DailyStep(Date.valueOf("2020-03-25"), 7000),
+            new DailyStep(Date.valueOf("2020-03-26"), 1000),
+            new DailyStep(Date.valueOf("2020-03-27"), 10000),
+            new DailyStep(Date.valueOf("2020-03-28"), 8000));
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getActivity() != null) {
+            dailyStepViewModel = ViewModelProviders.of(getActivity()).get(DailyStepViewModel.class);
+        }
+//   uncomment it for adding data to database
+//        for (DailyStep record: weeklyData) {
+//            dailyStepViewModel.addDailyStep(record);
+//        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -61,7 +76,26 @@ public class RecordsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
-        generateColumnData(args.getString(ARG_INTERVAL));
+        String interval = args.getString(ARG_INTERVAL);
+        if (dailyStepViewModel != null) {
+            switch (interval) {
+                case "DAILY":
+                    dailyStepViewModel.getDailyStepRecords().observe(this, data ->
+                            generateWeeklyColumnData(data)
+                    );
+                    break;
+                case "WEEKLY":
+                    dailyStepViewModel.getWeeklyStepRecords().observe(this, data ->
+                            generateWeeklyColumnData(data)
+                    );
+                    break;
+                default:
+                    dailyStepViewModel.getMonthlyStepRecords().observe(this, data ->
+                            generateWeeklyColumnData(data));
+                    break;
+            }
+        }
+//        generateColumnData(args.getString(ARG_INTERVAL));
 //        ((ColumnChartView) view.findViewById(R.id.column_chart))
 //                .setText(Integer.toString(args.getInt(ARG_OBJECT)));
     }
