@@ -13,11 +13,12 @@ public final class SharedPreferencesUtil {
 
     private static final String TAG = SharedPreferencesUtil.class.getSimpleName();
 
-    private static final String DEFAULT_SHARED_PREFERENCES_NAME = "default";
+    private static final String DEFAULT_SHARED_PREFERENCES_NAME = "go-walk";
     private static final String KEY_USER_ID = "user-id";
     private static final String KEY_IS_FIRST_LAUNCH = "is-first-launch";
     private static final String KEY_DAILY_STEP_GOAL = "daily-step-goal";
     private static final String KEY_POINTS_GAINED_FOR_DAILY_GOAL = "points-gained-for-daily-goal";
+    private static final String KEY_ACCUMLATE_POINTS = "accumulate-points";
 
     public static void setUserId(Context context, @Nullable String value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
@@ -79,4 +80,19 @@ public final class SharedPreferencesUtil {
                 .putBoolean(KEY_IS_FIRST_LAUNCH, true)
                 .apply();
     }
+
+    public static int getAccumulatePoints(Context context) {
+        return context
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+                .getInt(KEY_ACCUMLATE_POINTS, /* defValue= */ 0);
+    }
+
+    public static void setAccumulatePoints(Context context, int value) {
+        context
+                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_ACCUMLATE_POINTS, value)
+                .apply();
+    }
+
 }

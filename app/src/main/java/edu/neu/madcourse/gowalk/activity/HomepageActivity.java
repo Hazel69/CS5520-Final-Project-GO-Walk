@@ -48,6 +48,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         int defaultCurrentStep = 0;
         populatePieChart(defaultCurrentStep, getDailyStepGoal(this));
 
+        //TODO: may move to service for tracking step when app is killed
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepCountSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if (stepCountSensor != null) {
@@ -116,6 +117,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        //TODO: should calculate the step for today, cause the sensor returns the number of steps taken by the user since the last reboot
+        //TODO: should update data in db and update data in Firebase
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             populatePieChart( Math.round(event.values[0]), getDailyStepGoal(this));
             Log.d(TAG, "Updating step count to " + event.values[0] + " last updated timestamp is " + event.timestamp);

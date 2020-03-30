@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.firstLaunched;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.isFirstLaunch;
+import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setDailyStepGoal;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setPointsGainedForDailyGoal;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setUserId;
@@ -28,6 +29,8 @@ public class GoWalkApplication extends Application {
             setUserId(this, UUID.randomUUID().toString());
             setDailyStepGoal(this, DEFAULT_DAILY_STEP_GOAL);
             setPointsGainedForDailyGoal(this, DEFAULT_POINTS_GAINED_FOR_DAILY_GOAL);
+
+            setAccumulatePoints(this, 0);
 
             firstLaunched(this);
         }
