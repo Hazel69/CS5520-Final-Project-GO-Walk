@@ -1,6 +1,7 @@
 package edu.neu.madcourse.gowalk;
 
 import android.app.Application;
+import android.content.Intent;
 import android.util.Log;
 
 import java.util.UUID;
@@ -34,5 +35,7 @@ public class GoWalkApplication extends Application {
 
             firstLaunched(this);
         }
+        //start back ground service to keep the sensor alive
+//        startService(new Intent(getBaseContext(), StepCountingService.class));
     }
 }
