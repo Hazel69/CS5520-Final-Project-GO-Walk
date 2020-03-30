@@ -2,15 +2,13 @@ package edu.neu.madcourse.gowalk.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.model.DailyStep;
-import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
