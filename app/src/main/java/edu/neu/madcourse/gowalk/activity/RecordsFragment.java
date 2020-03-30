@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.model.DailyStep;
+import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
@@ -27,27 +29,28 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 
 public class RecordsFragment extends Fragment {
-    private static final String LOG_TAG = "Record Fragment";
     static final String ARG_INTERVAL = "interval";
-    static final String ARG_DATA = "data";
     private ColumnChartView columnChartView;
     private ColumnChartData columnChartData;
     private boolean hasAxes = true;
-    private boolean hasLabels = true;
-    private boolean hasLabelForSelected = false;
+    private boolean hasLabels = false;
+    private boolean hasLabelForSelected = true;
     private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
-    private static final String[] HOURS = {"12 AM", "6 AM", "12 PM", "6 PM"};
 
     private DailyStepViewModel dailyStepViewModel;
 
     //TODO: this is just for testing, need to remove after integrating with live data
-    private static final List<DailyStep> weeklyData = Arrays.asList(new DailyStep(Date.valueOf("2020-03-22"), 10000),
+    private static final List<DailyStep> weeklyData = Arrays.asList(
+            new DailyStep(Date.valueOf("2020-03-22"), 10000),
             new DailyStep(Date.valueOf("2020-03-23"), 6000),
             new DailyStep(Date.valueOf("2020-03-24"), 5000),
             new DailyStep(Date.valueOf("2020-03-25"), 7000),
             new DailyStep(Date.valueOf("2020-03-26"), 1000),
-            new DailyStep(Date.valueOf("2020-03-27"), 10000),
-            new DailyStep(Date.valueOf("2020-03-28"), 8000));
+            new DailyStep(Date.valueOf("2020-03-27"), 1000),
+            new DailyStep(Date.valueOf("2020-03-28"), 10000),
+            new DailyStep(Date.valueOf("2020-03-29"), 8000),
+            new DailyStep(Date.valueOf("2020-03-30"), 4000)
+    );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class RecordsFragment extends Fragment {
         if (getActivity() != null) {
             dailyStepViewModel = ViewModelProviders.of(getActivity()).get(DailyStepViewModel.class);
         }
-//   uncomment it for adding data to database
+   //uncomment it for adding data to database
 //        for (DailyStep record: weeklyData) {
 //            dailyStepViewModel.addDailyStep(record);
 //        }
@@ -73,47 +76,19 @@ public class RecordsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
+        assert args != null;
         String interval = args.getString(ARG_INTERVAL);
         if (dailyStepViewModel != null) {
-            switch (interval) {
-                case "DAILY":
-                    dailyStepViewModel.getDailyStepRecords().observe(this, data ->
-                            generateWeeklyColumnData(data)
-                    );
-                    break;
-                case "WEEKLY":
-                    dailyStepViewModel.getWeeklyStepRecords().observe(this, data ->
-                            generateWeeklyColumnData(data)
-                    );
-                    break;
-                default:
-                    dailyStepViewModel.getMonthlyStepRecords().observe(this, data ->
-                            generateWeeklyColumnData(data));
-                    break;
+            if ("WEEKLY".equals(interval)) {
+                dailyStepViewModel.getWeeklyStepRecords().observe(this, data -> generateColumnData(data, interval));
+            } else {    // monthly
+                dailyStepViewModel.getMonthlyStepRecords().observe(this, data -> generateColumnData(data, interval));
             }
         }
-//        generateColumnData(args.getString(ARG_INTERVAL));
-//        ((ColumnChartView) view.findViewById(R.id.column_chart))
-//                .setText(Integer.toString(args.getInt(ARG_OBJECT)));
     }
 
-    //TODO: use live data from view model and implement daily and monthly helpers
-    private void generateColumnData(String interval) {
-        switch (interval) {
-            case "DAILY":
-                generateWeeklyColumnData(weeklyData);
-                break;
-            case "WEEKLY":
-                generateWeeklyColumnData(weeklyData);
-                break;
-            default:
-                generateWeeklyColumnData(weeklyData);
-                break;
-        }
-    }
-
-    private void generateWeeklyColumnData(List<DailyStep> data) {
-        int numColumns = data.size();
+    private void generateColumnData(List<DailyStep> dataList, String interval) {
+        int numColumns = dataList.size();
         int numSubColumns = 1;
 
         List<AxisValue> xAxisValues = new ArrayList<>();
@@ -124,10 +99,16 @@ public class RecordsFragment extends Fragment {
         for (int i = 0; i < numColumns; i++) {
             values = new ArrayList<>();
             for (int j = 0; j < numSubColumns; j++) {
-                values.add(new SubcolumnValue(data.get(i).getStepCount(), ChartUtils.pickColor()));
+                values.add(new SubcolumnValue(dataList.get(i).getStepCount(), ChartUtils.nextColor()));
             }
-            calendar.setTime(data.get(i).getDate());
-            xAxisValues.add(new AxisValue(i).setLabel(DAYS[calendar.get(Calendar.DAY_OF_WEEK) - 1]));
+            calendar.setTime(dataList.get(i).getDate());
+            if ("WEEKLY".equals(interval)) {
+                xAxisValues.add(new AxisValue(i).setLabel(DAYS[calendar.get(Calendar.DAY_OF_WEEK) - 1]));
+            } else {
+                String label = (calendar.get(Calendar.MONTH) + 1) + "/" + (calendar.get(Calendar.DAY_OF_MONTH));
+                xAxisValues.add(new AxisValue(i).setLabel(label));
+            }
+
             Column column = new Column(values);
             column.setHasLabels(hasLabels);
             column.setHasLabelsOnlyForSelected(hasLabelForSelected);
@@ -138,9 +119,9 @@ public class RecordsFragment extends Fragment {
 
         if (hasAxes) {
             columnChartData.setAxisXBottom(new Axis(xAxisValues)
-                    .setHasLines(true).setTextSize(11).setMaxLabelChars(3).setTextColor(Color.BLACK));
-            columnChartData.setAxisYLeft(new Axis().
-                    setTextSize(11).setMaxLabelChars(5).setTextColor(Color.BLACK));
+                    .setTextSize(11).setMaxLabelChars(4).setTextColor(Color.BLACK));
+            columnChartData.setAxisYLeft(new Axis()
+                    .setHasLines(true).setTextSize(11).setMaxLabelChars(5).setTextColor(Color.BLACK));
         } else {
             columnChartData.setAxisXBottom(null);
             columnChartData.setAxisYLeft(null);

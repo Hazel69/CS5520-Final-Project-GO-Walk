@@ -19,10 +19,10 @@ public interface DailyStepDao {
     @Query("SELECT * FROM dailySteps")
     LiveData<List<DailyStep>> getAllDailySteps();
 
-    @Query("SELECT * FROM dailySteps WHERE date BETWEEN strftime('%s',date('now','-7 day')) AND strftime('%s',date('now','+1 day','localtime'))")
+    @Query("SELECT * FROM dailySteps WHERE date BETWEEN strftime('%s',date('now','-6 day')) AND strftime('%s',date('now','+1 day','localtime')) ORDER BY date")
     LiveData<List<DailyStep>> getWeeklySteps();
 
-    @Query("SELECT * FROM dailySteps WHERE date BETWEEN strftime('%s',date('now','-30 day')) AND strftime('%s',date('now','+1 day','localtime'))")
+    @Query("SELECT * FROM dailySteps WHERE date BETWEEN strftime('%s',date('now','-29 day')) AND strftime('%s',date('now','+1 day','localtime')) ORDER BY date")
     LiveData<List<DailyStep>> getMonthlySteps();
 
 }

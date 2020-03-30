@@ -9,7 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class RecordCollectionAdapter extends FragmentStateAdapter {
 
-    private static final String[] intervals = {"DAILY", "WEEKLY", "MONTHLY"};
+    private static final String[] intervals = {"WEEKLY", "MONTHLY"};
 
     public RecordCollectionAdapter(Fragment fragment) {
         super(fragment);
