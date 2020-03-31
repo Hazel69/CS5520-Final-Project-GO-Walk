@@ -96,6 +96,17 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         startActivity(intent);
     }
 
+    public void directToHomepage(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
+    }
+
+    //TODO: need to direct to goal setting activity
+    public void directToSettings(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
+    }
+
     private void populatePieChart(int currentStep, int dailyGoal) {
         currentStep = Math.min(currentStep, dailyGoal);
         SliceValue completedSliceValue = new SliceValue(currentStep, ChartUtils.pickColor());
