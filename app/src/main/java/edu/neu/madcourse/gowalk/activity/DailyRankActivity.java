@@ -1,5 +1,6 @@
 package edu.neu.madcourse.gowalk.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -31,6 +32,22 @@ public class DailyRankActivity extends AppCompatActivity {
         dailyRankViewModel.getDailyRankListLiveData().observe(this, mDailySteps -> {
             recyclerView.setAdapter(new DailyRankingAdapter(mDailySteps));
         });
+    }
+
+    public void directToDailyRanking(View view) {
+        Intent intent = new Intent(this, DailyRankActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToHomepage(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
+    }
+
+    //TODO: need to direct to goal setting activity
+    public void directToSettings(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
     }
 
 }
