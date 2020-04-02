@@ -35,6 +35,8 @@ public class DailyRankActivity extends AppCompatActivity {
     }
 
     public void directToDailyRanking(View view) {
+        Intent intent = new Intent(this, DailyRankActivity.class);
+        startActivity(intent);
     }
 
     public void directToHomepage(View view) {
@@ -42,8 +44,9 @@ public class DailyRankActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //TODO: need to direct to goal setting activity
     public void directToSettings(View view) {
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, HomepageActivity.class);
         startActivity(intent);
     }
 
