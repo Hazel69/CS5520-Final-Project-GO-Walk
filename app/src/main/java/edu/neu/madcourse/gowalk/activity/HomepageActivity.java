@@ -8,9 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
@@ -90,28 +86,6 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.homepage_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
-    }
-
     public void directToReport(View view) {
         Intent intent = new Intent(this, ReportActivity.class);
         startActivity(intent);
@@ -123,11 +97,13 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     }
 
     public void directToHomepage(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
     }
 
     //TODO: need to direct to goal setting activity
     public void directToSettings(View view) {
-        Intent intent = new Intent(this, SettingsActivity.class);
+        Intent intent = new Intent(this, HomepageActivity.class);
         startActivity(intent);
     }
 
