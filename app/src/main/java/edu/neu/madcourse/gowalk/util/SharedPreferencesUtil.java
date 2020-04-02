@@ -6,14 +6,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-
-import static android.content.Context.MODE_PRIVATE;
+import androidx.preference.PreferenceManager;
 
 public final class SharedPreferencesUtil {
 
     private static final String TAG = SharedPreferencesUtil.class.getSimpleName();
 
-    private static final String DEFAULT_SHARED_PREFERENCES_NAME = "go-walk";
     private static final String KEY_USER_ID = "user-id";
     private static final String KEY_IS_FIRST_LAUNCH = "is-first-launch";
     private static final String KEY_DAILY_STEP_GOAL = "daily-step-goal";
@@ -21,7 +19,7 @@ public final class SharedPreferencesUtil {
     private static final String KEY_ACCUMULATE_POINTS = "accumulate-points";
 
     public static void setUserId(Context context, @Nullable String value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String storedValue = sharedPreferences.getString(KEY_USER_ID, /* defValue= */ null);
 
         if (!TextUtils.isEmpty(storedValue)) {
@@ -36,60 +34,53 @@ public final class SharedPreferencesUtil {
 
     @Nullable
     public static String getUserId(Context context) {
-        return context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
-                .getString(KEY_USER_ID, /* defValue= */ null);
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_USER_ID, /* defValue= */ null);
     }
 
     public static void setDailyStepGoal(Context context, int value) {
-        context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putInt(KEY_DAILY_STEP_GOAL, value)
+                .putString(KEY_DAILY_STEP_GOAL, String.valueOf(value))
                 .apply();
     }
 
     public static int getDailyStepGoal(Context context) {
-        return context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
-                .getInt(KEY_DAILY_STEP_GOAL, /* defValue= */ 0);
+        return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(KEY_DAILY_STEP_GOAL, /* defValue= */ "0"));
     }
 
 
     public static void setPointsGainedForDailyGoal(Context context, int value) {
-        context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putInt(KEY_POINTS_GAINED_FOR_DAILY_GOAL, value)
+                .putString(KEY_POINTS_GAINED_FOR_DAILY_GOAL, String.valueOf(value))
                 .apply();
     }
 
     public static int getPointsGainedForDailyGoal(Context context) {
-        return context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
-                .getInt(KEY_POINTS_GAINED_FOR_DAILY_GOAL, /* defValue= */ 0);
+        return Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(KEY_POINTS_GAINED_FOR_DAILY_GOAL, /* defValue= */ "0"));
     }
 
     public static boolean isFirstLaunch(Context context) {
-        return context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(KEY_IS_FIRST_LAUNCH, true);
     }
 
     public static void firstLaunched(Context context) {
-        context.getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(KEY_IS_FIRST_LAUNCH, false)
                 .apply();
     }
 
     public static int getAccumulatePoints(Context context) {
-        return context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        return PreferenceManager.getDefaultSharedPreferences(context)
                 .getInt(KEY_ACCUMULATE_POINTS, /* defValue= */ 0);
     }
 
     public static void setAccumulatePoints(Context context, int value) {
-        context
-                .getSharedPreferences(DEFAULT_SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putInt(KEY_ACCUMULATE_POINTS, value)
                 .apply();
