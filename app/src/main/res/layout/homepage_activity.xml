@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 <!--    <TextView-->
 <!--        android:layout_width="wrap_content"-->
@@ -51,12 +51,14 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1">
+
         <lecho.lib.hellocharts.view.PieChartView
             android:id="@+id/pie_chart"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </FrameLayout>
+
     <fragment
         android:id="@+id/fragment"
         android:name="edu.neu.madcourse.gowalk.activity.RecordCollectionFragment"
@@ -64,39 +66,9 @@
         android:layout_height="460dp"
         tools:layout="@layout/fragment_record_collection" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+    <include
+        layout="@layout/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/design_default_color_background">
-
-        <ImageButton
-            android:id="@+id/homepageBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:background="@color/design_default_color_background"
-            android:onClick="directToHomepage"
-            app:srcCompat="@drawable/homepage_icon" />
-
-        <ImageButton
-            android:id="@+id/rankBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/design_default_color_background"
-            android:onClick="directToDailyRanking"
-            app:srcCompat="@drawable/daily_rank_icon" />
-
-        <ImageButton
-            android:id="@+id/goalSettingBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="@color/design_default_color_background"
-            android:onClick="directToSettings"
-            app:srcCompat="@drawable/settings_icon" />
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
-
+        android:layout_gravity="bottom" />
 </LinearLayout>

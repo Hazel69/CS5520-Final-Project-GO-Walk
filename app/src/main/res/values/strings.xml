@@ -7,4 +7,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="setting_username">Your username</string>
+    <string name="setting_daily_goal">Your daily step goal</string>
+    <string name="setting_daily_points">Points you gained for achieving daily goal</string>
+
 </resources>

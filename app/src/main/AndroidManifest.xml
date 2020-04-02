@@ -14,13 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"/>
+
+        <activity
             android:name=".activity.DailyRankActivity"
             android:label="@string/title_activity_daily_rank"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ReportActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <service android:name=".StepCountingService" />
+
         <activity android:name=".activity.HomepageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
