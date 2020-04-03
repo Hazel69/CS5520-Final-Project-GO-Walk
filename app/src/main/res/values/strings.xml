@@ -16,4 +16,8 @@
     <string name="setting_daily_goal">Your daily step goal</string>
     <string name="setting_daily_points">Points you gained for achieving daily goal</string>
 
+    <string name="channel_name">FCM</string>
+    <string name="channel_id">FCM_CHANNEL</string>
+    <string name="channel_description">Goal Completion</string>
+
 </resources>

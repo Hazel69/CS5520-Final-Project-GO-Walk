@@ -7,19 +7,34 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.ShareFragment;
+import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
@@ -33,6 +48,7 @@ import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGo
 public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
+    private static final String SERVER_KEY = "key=AAAAUV_nk_s:APA91bH9a-CchSZdc_smEYktmBM7-XSkVbgiEAcDchEKrLg6RqaMknNH4rO0id9OYTpvBRLwpCANQiWKaJIc_atgOqI3YhlP4_5AyTM3qAnlcGPQvcGUagavS0COGiKiyA4RO4DF4g97";
 
     private RewardListViewModel rewardListViewModel;
     private DailyStepViewModel dailyStepViewModel;
@@ -64,6 +80,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         } else {
             Log.e(TAG, "Failed to obtain step count sensor!!!");
         }
+
+        subscribeToGoalCompletion();
 
         //todo: these code are for testing, delete when implement the actual logic
 //        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
@@ -166,4 +184,23 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    private void subscribeToGoalCompletion() {
+        FirebaseMessaging.getInstance().subscribeToTopic("GoalCompletion")
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.d(TAG, "Message subscription failed.");
+                    }
+
+                });
+    }
+
+    /**
+     * Button Handler; creates a new thread that sends off a message
+     * @param type
+     */
+    public void sendMessageToGoalCompletion(View type) {
+        new Thread(FCMUtil::sendMessageToGoalCompletion).start();
+    }
+
 }
