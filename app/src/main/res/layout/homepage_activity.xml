@@ -58,14 +58,7 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/accumulate_points_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </TextView>
-
+    
     <fragment
         android:id="@+id/fragment"
         android:name="edu.neu.madcourse.gowalk.activity.RecordCollectionFragment"
