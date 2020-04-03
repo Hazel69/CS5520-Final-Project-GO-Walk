@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/homepageBtn"
+        android:enabled="true"
+        android:icon="@drawable/homepage_icon"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/rankBtn"
+        android:enabled="true"
+        android:icon="@drawable/daily_rank_icon"
+        android:title="Ranking"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/rewardBtn"
+        android:enabled="true"
+        android:icon="@drawable/ic_redeem"
+        android:title="Rewards"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/goalSettingBtn"
+        android:enabled="true"
+        android:icon="@drawable/settings_icon"
+        android:title="Setting"
+        app:showAsAction="ifRoom" />
+
+</menu>

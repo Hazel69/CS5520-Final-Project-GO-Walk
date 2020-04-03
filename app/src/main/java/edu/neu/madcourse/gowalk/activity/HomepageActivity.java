@@ -7,34 +7,22 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.AttributeSet;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.ShareFragment;
@@ -48,14 +36,11 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.PieChartView;
 
-import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getAccumulatePoints;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
-import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
 
 public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
-    private static final String SERVER_KEY = "key=AAAAUV_nk_s:APA91bH9a-CchSZdc_smEYktmBM7-XSkVbgiEAcDchEKrLg6RqaMknNH4rO0id9OYTpvBRLwpCANQiWKaJIc_atgOqI3YhlP4_5AyTM3qAnlcGPQvcGUagavS0COGiKiyA4RO4DF4g97";
 
     private RewardListViewModel rewardListViewModel;
     private DailyStepViewModel dailyStepViewModel;
@@ -63,6 +48,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     private PieChartView pieChartView;
     private SensorManager sensorManager;
     private Sensor stepCountSensor;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +74,31 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
             Log.e(TAG, "Failed to obtain step count sensor!!!");
         }
 
-        subscribeToGoalCompletion();
+        subscribeToTopic(getString(R.string.goal_completion_topic));
+        subscribeToTopic(getString(R.string.steps_topic));
+
+        bottomNav = findViewById(R.id.bottom_nav);
+
+        bottomNav.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.rankBtn:
+                                directToDailyRanking();
+                                break;
+                            case R.id.rewardBtn:
+                                directToRewards();
+                                break;
+                            case R.id.goalSettingBtn:
+                                directToSettings();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+
 
         //todo: these code are for testing, delete when implement the actual logic
 //        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
@@ -114,6 +124,13 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 //                System.out.println(Arrays.toString(dailySteps.toArray())));
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.getMenu().findItem(R.id.homepageBtn).setChecked(true);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -142,23 +159,21 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         startActivity(intent);
     }
 
-    public void directToDailyRanking(View view) {
+    public void directToDailyRanking() {
         Intent intent = new Intent(this, DailyRankActivity.class);
         startActivity(intent);
     }
 
-    public void directToHomepage(View view) {
-    }
-
-    public void directToSettings(View view) {
+    public void directToSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
-    public void directToRewards(View view) {
+    public void directToRewards() {
         Intent intent = new Intent(this, RewardsActivity.class);
         startActivity(intent);
     }
+
 
     private void populatePieChart(int currentStep, int dailyGoal) {
         currentStep = Math.min(currentStep, dailyGoal);
@@ -196,8 +211,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
     }
 
-    private void subscribeToGoalCompletion() {
-        FirebaseMessaging.getInstance().subscribeToTopic("GoalCompletion")
+    private void subscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.d(TAG, "Message subscription failed.");
@@ -206,13 +221,18 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
                 });
     }
 
-    /**
-     * Button Handler; creates a new thread that sends off a message
-     *
-     * @param type
-     */
-    public void sendMessageToGoalCompletion(View type) {
-        new Thread(FCMUtil::sendMessageToGoalCompletion).start();
+    public void sendMessageSteps(MenuItem item) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //TODO: need to use username
+                String userId = SharedPreferencesUtil.getUserId(getApplicationContext());
+                String msgTitle = String.format(getString(R.string.send_steps_title), userId);
+                //TODO: use actual steps
+                String msgBody = String.format(getString(R.string.send_steps_body), userId, 10000);
+                FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
+            }
+        }).start();
     }
 
 }

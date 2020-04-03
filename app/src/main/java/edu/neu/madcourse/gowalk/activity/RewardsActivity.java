@@ -3,6 +3,7 @@ package edu.neu.madcourse.gowalk.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -15,6 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -26,7 +30,9 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.AddRewardFragment;
+import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.model.Reward;
+import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
@@ -35,6 +41,9 @@ import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getAccumulateP
 public class RewardsActivity extends AppCompatActivity implements AddRewardFragment.AddRewardFragmentListener {
 
     private RewardListViewModel viewModel;
+
+    private  BottomNavigationView bottomNav;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +68,59 @@ public class RewardsActivity extends AppCompatActivity implements AddRewardFragm
 
         setTitle(getString(R.string.accumulate_points,getAccumulatePoints(this)));
 
+
+        bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.getMenu().findItem(R.id.rewardBtn).setChecked(true);
+
+        bottomNav.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.rankBtn:
+                                directToDailyRanking();
+                                break;
+                            case R.id.homepageBtn:
+                                directToHomepage();
+                                break;
+                            case R.id.goalSettingBtn:
+                                directToSettings();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.getMenu().findItem(R.id.rewardBtn).setChecked(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.homepage_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        if (item.getItemId() == R.id.share_menu_item) {
+            this.showShareFragment();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showShareFragment() {
+        ShareFragment shareFragment = new ShareFragment();
+        shareFragment.show(getSupportFragmentManager(), "shareFragment");
+    }
+
 
     private void redeemReward(Reward reward) {
         int currentAccumulatePoints = getAccumulatePoints(this);
@@ -138,30 +199,37 @@ public class RewardsActivity extends AppCompatActivity implements AddRewardFragm
                 deleteButton = itemView.findViewById(R.id.delete_reward_btn);
             }
         }
-
     }
 
-    public void directToReport(View view) {
-        Intent intent = new Intent(this, ReportActivity.class);
-        startActivity(intent);
-    }
-
-    public void directToDailyRanking(View view) {
+    public void directToDailyRanking() {
         Intent intent = new Intent(this, DailyRankActivity.class);
         startActivity(intent);
     }
 
-    public void directToHomepage(View view) {
+    public void directToHomepage() {
         Intent intent = new Intent(this, HomepageActivity.class);
         startActivity(intent);
     }
 
-    public void directToSettings(View view) {
+    public void directToSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
-    public void directToRewards(View view) {
+
+    public void sendMessageSteps(MenuItem item) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String userId = SharedPreferencesUtil.getUserId(getApplicationContext());
+                String msgTitle = String.format(getString(R.string.send_steps_title), userId);
+                //TODO: use actual steps
+                String msgBody = String.format(getString(R.string.send_steps_body), userId, 10000);
+                FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
+            }
+        }).start();
     }
+
+
 
 }

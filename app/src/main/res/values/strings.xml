@@ -3,10 +3,10 @@
     <string name="title_activity_report">ReportActivity</string>
     <string name="update_steps">Update</string>
     <string name="steps">Steps</string>
-    <string name="title_activity_daily_rank">DailyRankActivity</string>
+    <string name="title_activity_daily_rank">Daily Step Leaders</string>
 
     <!--    Homepage menu item title-->
-    <string name="share_item_title">Share with friend</string>
+    <string name="share_item_title">Share Steps</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_settings">Settings</string>
@@ -18,7 +18,13 @@
 
     <string name="channel_name">FCM</string>
     <string name="channel_id">FCM_CHANNEL</string>
-    <string name="channel_description">Goal Completion</string>
+    <string name="channel_description">FCM channel</string>
+
+    <string name="steps_topic">MessageSteps</string>
+    <string name="send_steps_title">Message from %1$s</string>
+    <string name="send_steps_body">%1$s achieves %2$d steps today!!!</string>
+    <string name="goal_completion_topic">GoalCompletion</string>
+
     <string name="title_activity_rewards">RewardsActivity</string>
 
     <!-- Add reward hint -->
@@ -28,5 +34,6 @@
     <string name="reward_points">%d points</string>
 
     <string name="accumulate_points">You current points: %d</string>
+
 
 </resources>
