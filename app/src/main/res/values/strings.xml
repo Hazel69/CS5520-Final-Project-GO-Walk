@@ -3,7 +3,7 @@
     <string name="title_activity_report">ReportActivity</string>
     <string name="update_steps">Update</string>
     <string name="steps">Steps</string>
-    <string name="title_activity_daily_rank">DailyRankActivity</string>
+    <string name="title_activity_daily_rank">Daily Step Leaders</string>
 
     <!--    Homepage menu item title-->
     <string name="share_item_title">Share Steps</string>
