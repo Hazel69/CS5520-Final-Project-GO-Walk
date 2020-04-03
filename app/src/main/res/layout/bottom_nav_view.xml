@@ -22,19 +22,10 @@
             android:id="@+id/rankBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="120dp"
+            android:layout_gravity="center_horizontal"
             android:background="@color/design_default_color_background"
             android:onClick="directToDailyRanking"
             app:srcCompat="@drawable/daily_rank_icon" />
-
-        <ImageButton
-            android:id="@+id/shareBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="240dp"
-            android:background="@color/design_default_color_background"
-            android:onClick="sendMessageToGoalCompletion"
-            app:srcCompat="@drawable/share_icon" />
 
         <ImageButton
             android:id="@+id/goalSettingBtn"

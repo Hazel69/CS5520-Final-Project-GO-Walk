@@ -3,13 +3,11 @@ package edu.neu.madcourse.gowalk;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -42,7 +40,7 @@ public class GoWalkFirebaseMessagingService extends FirebaseMessagingService {
 
             // Note: We happen to be just getting the body of the notification and displaying it.
             // We could also get the title and other info and do different things.
-            sendNotification(remoteMessage.getNotification().getBody());
+            sendNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
         }
 
     }
@@ -53,7 +51,7 @@ public class GoWalkFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Refreshed token: " + newToken);
     }
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody, String messageTitle) {
         Intent intent = new Intent(this, HomepageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -64,7 +62,7 @@ public class GoWalkFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_stat_ic_notification)
-                        .setContentTitle(getString(R.string.channel_description))
+                        .setContentTitle(messageTitle)
                         .setContentText(messageBody)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
