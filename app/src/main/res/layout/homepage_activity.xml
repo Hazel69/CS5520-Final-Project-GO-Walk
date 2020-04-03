@@ -63,8 +63,9 @@
         android:id="@+id/fragment"
         android:name="edu.neu.madcourse.gowalk.activity.RecordCollectionFragment"
         android:layout_width="match_parent"
-        android:layout_height="460dp"
-        tools:layout="@layout/fragment_record_collection" />
+        android:layout_height="0dp"
+        tools:layout="@layout/fragment_record_collection"
+        android:layout_weight="2"/>
 
     <include
         layout="@layout/bottom_nav_view"
