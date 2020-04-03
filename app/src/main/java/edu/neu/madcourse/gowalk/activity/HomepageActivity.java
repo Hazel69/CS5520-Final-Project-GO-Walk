@@ -135,7 +135,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
     }
-    
+
     public void directToReport(View view) {
         Intent intent = new Intent(this, ReportActivity.class);
         startActivity(intent);
