@@ -25,4 +25,15 @@
     <string name="send_steps_body">%1$s achieves %2$d steps today!!!</string>
     <string name="goal_completion_topic">GoalCompletion</string>
 
+    <string name="title_activity_rewards">RewardsActivity</string>
+
+    <!-- Add reward hint -->
+    <string name="reward_name_hint">Please enter name of the reward</string>
+    <string name="reward_points_hint">Please enter points of the reward</string>
+
+    <string name="reward_points">%d points</string>
+
+    <string name="accumulate_points">You current points: %d</string>
+
+
 </resources>

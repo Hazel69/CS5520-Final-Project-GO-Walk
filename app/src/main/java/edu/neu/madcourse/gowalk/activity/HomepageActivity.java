@@ -7,21 +7,23 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
@@ -44,6 +46,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     private PieChartView pieChartView;
     private SensorManager sensorManager;
     private Sensor stepCountSensor;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,29 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         subscribeToTopic(getString(R.string.goal_completion_topic));
         subscribeToTopic(getString(R.string.steps_topic));
 
+        bottomNav = findViewById(R.id.bottom_nav);
+
+        bottomNav.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.rankBtn:
+                                directToDailyRanking();
+                                break;
+                            case R.id.rewardBtn:
+                                directToRewards();
+                                break;
+                            case R.id.goalSettingBtn:
+                                directToSettings();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+
+
         //todo: these code are for testing, delete when implement the actual logic
 //        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
 //        findViewById(R.id.add_reward).setOnClickListener(view -> {
@@ -98,25 +124,16 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNav.getMenu().findItem(R.id.homepageBtn).setChecked(true);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
     }
 
     public void directToReport(View view) {
@@ -124,19 +141,21 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         startActivity(intent);
     }
 
-    public void directToDailyRanking(View view) {
+    public void directToDailyRanking() {
         Intent intent = new Intent(this, DailyRankActivity.class);
         startActivity(intent);
     }
 
-    public void directToHomepage(View view) {
-    }
-
-    //TODO: need to direct to goal setting activity
-    public void directToSettings(View view) {
+    public void directToSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    public void directToRewards() {
+        Intent intent = new Intent(this, RewardsActivity.class);
+        startActivity(intent);
+    }
+
 
     private void populatePieChart(int currentStep, int dailyGoal) {
         currentStep = Math.min(currentStep, dailyGoal);
@@ -162,7 +181,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         //TODO: should calculate the step for today, cause the sensor returns the number of steps taken by the user since the last reboot
         //TODO: should update data in db and update data in Firebase
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            populatePieChart( Math.round(event.values[0]), getDailyStepGoal(this));
+            populatePieChart(Math.round(event.values[0]), getDailyStepGoal(this));
             Log.d(TAG, "Updating step count to " + event.values[0] + " last updated timestamp is " + event.timestamp);
         } else {
             Log.e(TAG, "Receiving event from sensor type: " + event.sensor.getName());

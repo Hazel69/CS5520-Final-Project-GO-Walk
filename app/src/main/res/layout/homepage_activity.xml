@@ -58,7 +58,7 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
+    
     <fragment
         android:id="@+id/fragment"
         android:name="edu.neu.madcourse.gowalk.activity.RecordCollectionFragment"

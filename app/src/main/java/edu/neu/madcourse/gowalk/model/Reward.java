@@ -13,7 +13,6 @@ public class Reward {
 
     private String name;
 
-    private String description;
     private int points;
 
 //    //todo: does the userId needed? cause in local database, it only stores the reward fo one user
@@ -23,19 +22,10 @@ public class Reward {
 //            onDelete = ForeignKey.CASCADE)
 //    private int userId;
 
-    public Reward(String name, String description, int points) {
+    public Reward(String name, int points) {
         this.name = name;
-        this.description = description;
         this.points = points;
 //        this.userId = userId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getPoints() {
