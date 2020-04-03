@@ -19,5 +19,6 @@
     <string name="channel_name">FCM</string>
     <string name="channel_id">FCM_CHANNEL</string>
     <string name="channel_description">Goal Completion</string>
+    <string name="title_activity_rewards">RewardsActivity</string>
 
 </resources>
