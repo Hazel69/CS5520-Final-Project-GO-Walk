@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyRankViewModel;
 
 public class DailyRankActivity extends AppCompatActivity {
@@ -44,10 +43,6 @@ public class DailyRankActivity extends AppCompatActivity {
     public void directToSettings(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
-    }
-
-    public void sendMessageToGoalCompletion(View type) {
-        new Thread(FCMUtil::sendMessageToGoalCompletion).start();
     }
 
 }

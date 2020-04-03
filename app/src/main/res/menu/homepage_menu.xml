@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/share_menu_item"
+        android:onClick="sendMessageSteps"
         android:title="@string/share_item_title"
         app:showAsAction="never"/>
 </menu>

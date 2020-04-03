@@ -23,6 +23,7 @@ import java.util.List;
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
+import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
@@ -68,7 +69,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
             Log.e(TAG, "Failed to obtain step count sensor!!!");
         }
 
-        subscribeToGoalCompletion();
+        subscribeToTopic(getString(R.string.goal_completion_topic));
+        subscribeToTopic(getString(R.string.steps_topic));
 
         //todo: these code are for testing, delete when implement the actual logic
 //        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
@@ -172,8 +174,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
     }
 
-    private void subscribeToGoalCompletion() {
-        FirebaseMessaging.getInstance().subscribeToTopic("GoalCompletion")
+    private void subscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
                         Log.d(TAG, "Message subscription failed.");
@@ -182,8 +184,18 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
                 });
     }
 
-    public void sendMessageToGoalCompletion(View type) {
-        new Thread(FCMUtil::sendMessageToGoalCompletion).start();
+    public void sendMessageSteps(MenuItem item) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //TODO: need to use username
+                String userId = SharedPreferencesUtil.getUserId(getApplicationContext());
+                String msgTitle = String.format(getString(R.string.send_steps_title), userId);
+                //TODO: use actual steps
+                String msgBody = String.format(getString(R.string.send_steps_body), userId, 10000);
+                FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
+            }
+        }).start();
     }
 
 }
