@@ -14,8 +14,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RewardsActivity"
-            android:label="@string/title_activity_rewards"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/title_activity_rewards">
+        </activity>
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />

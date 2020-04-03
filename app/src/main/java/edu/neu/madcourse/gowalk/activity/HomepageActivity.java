@@ -9,13 +9,17 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -35,6 +39,7 @@ import java.util.Scanner;
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
+import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
@@ -43,7 +48,9 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.PieChartView;
 
+import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getAccumulatePoints;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
+import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
 
 public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -143,9 +150,13 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     public void directToHomepage(View view) {
     }
 
-    //TODO: need to direct to goal setting activity
     public void directToSettings(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToRewards(View view) {
+        Intent intent = new Intent(this, RewardsActivity.class);
         startActivity(intent);
     }
 
@@ -173,7 +184,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         //TODO: should calculate the step for today, cause the sensor returns the number of steps taken by the user since the last reboot
         //TODO: should update data in db and update data in Firebase
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            populatePieChart( Math.round(event.values[0]), getDailyStepGoal(this));
+            populatePieChart(Math.round(event.values[0]), getDailyStepGoal(this));
             Log.d(TAG, "Updating step count to " + event.values[0] + " last updated timestamp is " + event.timestamp);
         } else {
             Log.e(TAG, "Receiving event from sensor type: " + event.sensor.getName());
@@ -197,6 +208,7 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
     /**
      * Button Handler; creates a new thread that sends off a message
+     *
      * @param type
      */
     public void sendMessageToGoalCompletion(View type) {

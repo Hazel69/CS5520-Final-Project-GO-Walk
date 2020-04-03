@@ -67,4 +67,9 @@ public class DailyRankActivity extends AppCompatActivity {
         new Thread(FCMUtil::sendMessageToGoalCompletion).start();
     }
 
+    public void directToRewards(View view) {
+        Intent intent = new Intent(this, RewardsActivity.class);
+        startActivity(intent);
+    }
+
 }

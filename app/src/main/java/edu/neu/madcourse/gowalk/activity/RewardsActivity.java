@@ -1,5 +1,6 @@
 package edu.neu.madcourse.gowalk.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,11 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
+import edu.neu.madcourse.gowalk.fragment.AddRewardFragment;
 import edu.neu.madcourse.gowalk.model.Reward;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
-public class RewardsActivity extends AppCompatActivity {
+import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getAccumulatePoints;
+
+public class RewardsActivity extends AppCompatActivity implements AddRewardFragment.AddRewardFragmentListener {
 
     private RewardListViewModel viewModel;
 
@@ -49,13 +53,16 @@ public class RewardsActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.add_reward_fab);
         fab.setOnClickListener(view -> {
-            //TODO: open fragment
+            AddRewardFragment addRewardFragment = new AddRewardFragment();
+            addRewardFragment.show(getSupportFragmentManager(), "AddRewardFragment");
         });
+
+        setTitle(getString(R.string.accumulate_points,getAccumulatePoints(this)));
 
     }
 
     private void redeemReward(Reward reward) {
-        int currentAccumulatePoints = SharedPreferencesUtil.getAccumulatePoints(this);
+        int currentAccumulatePoints = getAccumulatePoints(this);
         if (currentAccumulatePoints < reward.getPoints()) {
             //don't have points to redeem the reward
             Toast.makeText(this, "You don't have enough points to redeem the reward. Please keep walking!", Toast.LENGTH_LONG).show();
@@ -63,10 +70,21 @@ public class RewardsActivity extends AppCompatActivity {
             SharedPreferencesUtil.setAccumulatePoints(this, currentAccumulatePoints - reward.getPoints());
             viewModel.deleteReward(reward);
             Toast.makeText(this, "Congratulations!! You are doing great!", Toast.LENGTH_LONG).show();
+            setTitle(getString(R.string.accumulate_points,getAccumulatePoints(this)));
         }
     }
 
+    @Override
+    public void showAddRewardEmptyValueInfo() {
+        Toast. makeText(this, "The name and points cannot be empty.",
+                Toast.LENGTH_LONG).show();
+    }
 
+    @Override
+    public void showAddRewardSuccessInfo() {
+        Toast.makeText(this, "Add the reward successfully!",
+                Toast.LENGTH_LONG).show();
+    }
 
     private class RewardListAdapter extends RecyclerView.Adapter<RewardListAdapter.RewardViewHolder> {
 
@@ -88,7 +106,7 @@ public class RewardsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RewardViewHolder holder, int position) {
             Reward reward = rewardList.get(position);
             holder.rewardName.setText(reward.getName());
-            holder.rewardPoints.setText(reward.getPoints());
+            holder.rewardPoints.setText(getString(R.string.reward_points, reward.getPoints()));
             holder.deleteButton.setOnClickListener(view -> {
                 viewModel.deleteReward(reward);
             });
@@ -123,5 +141,27 @@ public class RewardsActivity extends AppCompatActivity {
 
     }
 
+    public void directToReport(View view) {
+        Intent intent = new Intent(this, ReportActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToDailyRanking(View view) {
+        Intent intent = new Intent(this, DailyRankActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToHomepage(View view) {
+        Intent intent = new Intent(this, HomepageActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToSettings(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void directToRewards(View view) {
+    }
 
 }

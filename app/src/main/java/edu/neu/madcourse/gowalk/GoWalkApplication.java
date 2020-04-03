@@ -6,6 +6,8 @@ import android.util.Log;
 
 import java.util.UUID;
 
+import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
+
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.firstLaunched;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.isFirstLaunch;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
@@ -31,7 +33,10 @@ public class GoWalkApplication extends Application {
             setDailyStepGoal(this, DEFAULT_DAILY_STEP_GOAL);
             setPointsGainedForDailyGoal(this, DEFAULT_POINTS_GAINED_FOR_DAILY_GOAL);
 
-            setAccumulatePoints(this, 0);
+//            setAccumulatePoints(this, 0);
+            //TODO: for testing, delete this
+            setAccumulatePoints(this, 100);
+
 
             firstLaunched(this);
         }
