@@ -17,7 +17,6 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
@@ -131,29 +129,13 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         bottomNav.getMenu().findItem(R.id.homepageBtn).setChecked(true);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
-    }
-
+    
     public void directToReport(View view) {
         Intent intent = new Intent(this, ReportActivity.class);
         startActivity(intent);

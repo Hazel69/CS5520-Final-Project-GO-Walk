@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyRankViewModel;
@@ -79,21 +78,6 @@ public class DailyRankActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
     }
 
     public void directToHomepage() {

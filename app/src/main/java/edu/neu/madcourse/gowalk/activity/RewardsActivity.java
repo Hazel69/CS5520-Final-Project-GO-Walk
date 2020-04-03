@@ -5,11 +5,9 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,7 +28,6 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.fragment.AddRewardFragment;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.model.Reward;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
@@ -105,22 +102,6 @@ public class RewardsActivity extends AppCompatActivity implements AddRewardFragm
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
-    }
-
 
     private void redeemReward(Reward reward) {
         int currentAccumulatePoints = getAccumulatePoints(this);

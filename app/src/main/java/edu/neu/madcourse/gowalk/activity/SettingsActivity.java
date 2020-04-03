@@ -6,7 +6,6 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -17,7 +16,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.fragment.ShareFragment;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 
@@ -83,26 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        if (item.getItemId() == R.id.share_menu_item) {
-            this.showShareFragment();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showShareFragment() {
-        ShareFragment shareFragment = new ShareFragment();
-        shareFragment.show(getSupportFragmentManager(), "shareFragment");
-    }
-
-    public void directToRewards(View view) {
-        Intent intent = new Intent(this, RewardsActivity.class);
-        startActivity(intent);
     }
 
     public void sendMessageSteps(MenuItem item) {
