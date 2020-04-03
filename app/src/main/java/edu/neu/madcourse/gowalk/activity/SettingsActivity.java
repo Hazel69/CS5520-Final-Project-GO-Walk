@@ -12,6 +12,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import edu.neu.madcourse.gowalk.R;
+import edu.neu.madcourse.gowalk.util.FCMUtil;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -65,6 +66,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void directToSettings(View view) {
+    }
+
+    public void sendMessageToGoalCompletion(View type) {
+        new Thread(FCMUtil::sendMessageToGoalCompletion).start();
     }
 
 

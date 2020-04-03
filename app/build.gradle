@@ -52,6 +52,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.4'
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
 }
