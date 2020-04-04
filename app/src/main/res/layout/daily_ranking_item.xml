@@ -8,6 +8,18 @@
     android:background="?attr/selectableItemBackground"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/icon_view"
+        android:layout_width="42dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/white"
+        android:src="@drawable/first_place_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dailyRank"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/dailyRank"
         android:layout_width="74dp"
@@ -21,7 +33,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/dailyRankUserName"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -48,8 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.757"
         app:layout_constraintStart_toEndOf="@+id/dailyRankUserName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.50" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

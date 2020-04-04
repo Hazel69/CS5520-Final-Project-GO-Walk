@@ -49,7 +49,11 @@ public class RecordsFragment extends Fragment {
             new DailyStep(Date.valueOf("2020-03-27"), 1000),
             new DailyStep(Date.valueOf("2020-03-28"), 10000),
             new DailyStep(Date.valueOf("2020-03-29"), 8000),
-            new DailyStep(Date.valueOf("2020-03-30"), 4000)
+            new DailyStep(Date.valueOf("2020-03-30"), 4000),
+            new DailyStep(Date.valueOf("2020-03-31"), 10000),
+            new DailyStep(Date.valueOf("2020-04-01"), 8000),
+            new DailyStep(Date.valueOf("2020-04-02"), 4000),
+            new DailyStep(Date.valueOf("2020-04-03"), 12000)
     );
 
     @Override
