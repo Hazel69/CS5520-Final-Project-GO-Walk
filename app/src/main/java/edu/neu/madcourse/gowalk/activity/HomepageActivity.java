@@ -1,13 +1,10 @@
 package edu.neu.madcourse.gowalk.activity;
 
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
+import edu.neu.madcourse.gowalk.StepCountingService;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
-
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.util.ChartUtils;
@@ -36,7 +33,7 @@ import lecho.lib.hellocharts.view.PieChartView;
 
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
 
-public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
+public class HomepageActivity extends AppCompatActivity {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
 
@@ -44,9 +41,9 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
     private DailyStepViewModel dailyStepViewModel;
 
     private PieChartView pieChartView;
-    private SensorManager sensorManager;
-    private Sensor stepCountSensor;
     private BottomNavigationView bottomNav;
+    private StepCountingService stepCountingService;
+    private ServiceConnection serviceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,24 +56,10 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         int defaultCurrentStep = 0;
         populatePieChart(defaultCurrentStep, getDailyStepGoal(this));
 
-        //TODO: may move to service for tracking step when app is killed
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        stepCountSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (stepCountSensor != null) {
-            Log.v(TAG, "Register listener to SensorManager");
-            final boolean result = sensorManager.registerListener(this, stepCountSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            if (!result) {
-                Log.e(TAG, "Failed to register listener to step count sensor");
-            }
-        } else {
-            Log.e(TAG, "Failed to obtain step count sensor!!!");
-        }
-
         subscribeToTopic(getString(R.string.goal_completion_topic));
         subscribeToTopic(getString(R.string.steps_topic));
 
         bottomNav = findViewById(R.id.bottom_nav);
-
         bottomNav.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -96,8 +79,24 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
                     }
                 });
 
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d(TAG, "StepCountingService connected");
+                stepCountingService =
+                        ((StepCountingService.StepCountingBinder) service).getService();
+                stepCountingService.getCurrentStep().observe(HomepageActivity.this,
+                        result -> populatePieChart(result,
+                                SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this)));
+            }
 
-
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d(TAG, "StepCountingService disconnected");
+            }
+        };
+        bindService(new Intent(this, StepCountingService.class), serviceConnection,
+                BIND_AUTO_CREATE);
         //todo: these code are for testing, delete when implement the actual logic
 //        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
 //        findViewById(R.id.add_reward).setOnClickListener(view -> {
@@ -114,7 +113,8 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 //
 //        dailyStepViewModel = ViewModelProviders.of(this).get(DailyStepViewModel.class);
 //        findViewById(R.id.add_daily_step).setOnClickListener(view -> {
-//            DailyStep dailyStep = new DailyStep(new Date(Calendar.getInstance().getTimeInMillis()), 200);
+//            DailyStep dailyStep = new DailyStep(new Date(Calendar.getInstance().getTimeInMillis
+//            ()), 200);
 //            dailyStepViewModel.addDailyStep(dailyStep);
 //        });
 //
@@ -176,23 +176,6 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         pieChartView.setPieChartData(data);
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        //TODO: should calculate the step for today, cause the sensor returns the number of steps taken by the user since the last reboot
-        //TODO: should update data in db and update data in Firebase
-        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            populatePieChart(Math.round(event.values[0]), getDailyStepGoal(this));
-            Log.d(TAG, "Updating step count to " + event.values[0] + " last updated timestamp is " + event.timestamp);
-        } else {
-            Log.e(TAG, "Receiving event from sensor type: " + event.sensor.getName());
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
     private void subscribeToTopic(String topic) {
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener(task -> {
@@ -217,4 +200,10 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         }).start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        unbindService(serviceConnection);
+    }
 }

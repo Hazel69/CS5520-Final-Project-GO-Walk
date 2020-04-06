@@ -17,6 +17,7 @@ public final class SharedPreferencesUtil {
     private static final String KEY_DAILY_STEP_GOAL = "daily-step-goal";
     private static final String KEY_POINTS_GAINED_FOR_DAILY_GOAL = "points-gained-for-daily-goal";
     private static final String KEY_ACCUMULATE_POINTS = "accumulate-points";
+    private static final String KEY_STEP_OFFSET = "step-offset";
 
     public static void setUserId(Context context, @Nullable String value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -84,6 +85,15 @@ public final class SharedPreferencesUtil {
                 .edit()
                 .putInt(KEY_ACCUMULATE_POINTS, value)
                 .apply();
+    }
+
+    public static void setStepOffset(Context context, int value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putInt(KEY_STEP_OFFSET, value).apply();
+    }
+
+    public static int getStepOffset(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_STEP_OFFSET, 0);
     }
 
 }
