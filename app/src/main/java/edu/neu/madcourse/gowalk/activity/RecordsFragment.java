@@ -13,12 +13,11 @@ import androidx.lifecycle.ViewModelProviders;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.model.DailyStep;
+import edu.neu.madcourse.gowalk.model.DailyStepF;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -40,17 +39,17 @@ public class RecordsFragment extends Fragment {
     private DailyStepViewModel dailyStepViewModel;
 
     //TODO: this is just for testing, need to remove after integrating with live data
-    private static final List<DailyStep> weeklyData = Arrays.asList(
-            new DailyStep(Date.valueOf("2020-03-22"), 10000),
-            new DailyStep(Date.valueOf("2020-03-23"), 6000),
-            new DailyStep(Date.valueOf("2020-03-24"), 5000),
-            new DailyStep(Date.valueOf("2020-03-25"), 7000),
-            new DailyStep(Date.valueOf("2020-03-26"), 1000),
-            new DailyStep(Date.valueOf("2020-03-27"), 1000),
-            new DailyStep(Date.valueOf("2020-03-28"), 10000),
-            new DailyStep(Date.valueOf("2020-03-29"), 8000),
-            new DailyStep(Date.valueOf("2020-03-30"), 4000)
-    );
+//    private static final List<DailyStep> weeklyData = Arrays.asList(
+//            new DailyStep(Date.valueOf("2020-03-22"), 10000),
+//            new DailyStep(Date.valueOf("2020-03-23"), 6000),
+//            new DailyStep(Date.valueOf("2020-03-24"), 5000),
+//            new DailyStep(Date.valueOf("2020-03-25"), 7000),
+//            new DailyStep(Date.valueOf("2020-03-26"), 1000),
+//            new DailyStep(Date.valueOf("2020-03-27"), 1000),
+//            new DailyStep(Date.valueOf("2020-03-28"), 10000),
+//            new DailyStep(Date.valueOf("2020-03-29"), 8000),
+//            new DailyStep(Date.valueOf("2020-03-30"), 4000)
+//    );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,14 +79,14 @@ public class RecordsFragment extends Fragment {
         String interval = args.getString(ARG_INTERVAL);
         if (dailyStepViewModel != null) {
             if ("WEEKLY".equals(interval)) {
-                dailyStepViewModel.getWeeklyStepRecords().observe(this, data -> generateColumnData(data, interval));
+                dailyStepViewModel.getWeeklyStepRecordsLiveData().observe(this, data -> generateColumnData(data, interval));
             } else {    // monthly
-                dailyStepViewModel.getMonthlyStepRecords().observe(this, data -> generateColumnData(data, interval));
+                dailyStepViewModel.getMonthlyStepRecordsLiveData().observe(this, data -> generateColumnData(data, interval));
             }
         }
     }
 
-    private void generateColumnData(List<DailyStep> dataList, String interval) {
+    private void generateColumnData(List<DailyStepF> dataList, String interval) {
         int numColumns = dataList.size();
         int numSubColumns = 1;
 
@@ -101,7 +100,7 @@ public class RecordsFragment extends Fragment {
             for (int j = 0; j < numSubColumns; j++) {
                 values.add(new SubcolumnValue(dataList.get(i).getStepCount(), ChartUtils.nextColor()));
             }
-            calendar.setTime(dataList.get(i).getDate());
+            calendar.setTime(Date.valueOf(dataList.get(i).getDate()));
             if ("WEEKLY".equals(interval)) {
                 xAxisValues.add(new AxisValue(i).setLabel(DAYS[calendar.get(Calendar.DAY_OF_WEEK) - 1]));
             } else {
