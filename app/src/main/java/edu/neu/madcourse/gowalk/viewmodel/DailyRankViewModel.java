@@ -44,10 +44,6 @@ public class DailyRankViewModel extends AndroidViewModel {
             mQueryDailyStepList.clear();
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                System.out.println(snapshot);
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    System.out.println(snapshot1.getValue() + ": " + snapshot1.getValue().getClass());
-                }
                 DailyStepF dailyStep = snapshot.getValue(DailyStepF.class);
                 mQueryDailyStepList.add(0, dailyStep);
             }
