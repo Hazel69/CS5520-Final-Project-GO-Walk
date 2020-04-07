@@ -1,19 +1,23 @@
 package edu.neu.madcourse.gowalk.activity;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,6 +39,8 @@ import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGo
 public class HomepageActivity extends AppCompatActivity {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_ACTIVITY_RECOGNITION_PERMISSION = 1002;
+
     private PieChartView pieChartView;
     private BottomNavigationView bottomNav;
     private StepCountingService stepCountingService;
@@ -46,10 +52,6 @@ public class HomepageActivity extends AppCompatActivity {
         setContentView(R.layout.homepage_activity);
 
         pieChartView = findViewById(R.id.pie_chart);
-
-        //todo: should fetch this data from db or SharedPreference
-        int defaultCurrentStep = 0;
-        populatePieChart(defaultCurrentStep, getDailyStepGoal(this));
 
         subscribeToTopic(getString(R.string.goal_completion_topic));
         subscribeToTopic(getString(R.string.steps_topic));
@@ -81,8 +83,11 @@ public class HomepageActivity extends AppCompatActivity {
                 stepCountingService =
                         ((StepCountingService.StepCountingBinder) service).getService();
                 stepCountingService.getCurrentStep().observe(HomepageActivity.this,
-                        result -> populatePieChart(result,
-                                SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this)));
+                        result -> {
+                            populatePieChart(result,
+                                    SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this));
+                            SharedPreferencesUtil.setTodayStep(HomepageActivity.this, result);
+                        });
             }
 
             @Override
@@ -93,13 +98,43 @@ public class HomepageActivity extends AppCompatActivity {
 
         bindService(new Intent(this, StepCountingService.class), serviceConnection,
                 BIND_AUTO_CREATE);
-        //todo: these code are for testing, delete when implement the actual logic
+
+        //the system auto-grants the permission if API level is lower or equals to API Level 28
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                        REQUEST_CODE_ACTIVITY_RECOGNITION_PERMISSION
+                );
+            }
+        }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         bottomNav.getMenu().findItem(R.id.homepageBtn).setChecked(true);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ACTIVITY_RECOGNITION_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //restart the service
+                    stopService(new Intent(this, StepCountingService.class));
+                    startForegroundService(new Intent(this, StepCountingService.class));
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                            REQUEST_CODE_ACTIVITY_RECOGNITION_PERMISSION
+                    );
+                }
+            }
+        }
     }
 
     @Override
@@ -158,10 +193,11 @@ public class HomepageActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String username = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
+                String username =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
                 String msgTitle = String.format(getString(R.string.send_steps_title), username);
-                //TODO: use actual steps
-                String msgBody = String.format(getString(R.string.send_steps_body), username, 10000);
+                String msgBody = String.format(getString(R.string.send_steps_body), username,
+                        SharedPreferencesUtil.getTodayStep(HomepageActivity.this));
                 FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
             }
         }).start();

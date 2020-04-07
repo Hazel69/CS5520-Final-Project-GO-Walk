@@ -31,11 +31,6 @@ public class GoWalkApplication extends Application {
             setDailyStepGoal(this, DEFAULT_DAILY_STEP_GOAL);
             setPointsGainedForDailyGoal(this, DEFAULT_POINTS_GAINED_FOR_DAILY_GOAL);
 
-//            setAccumulatePoints(this, 0);
-            //TODO: for testing, delete this
-            setAccumulatePoints(this, 100);
-
-
             firstLaunched(this);
         }
         //start back ground service to keep the sensor alive

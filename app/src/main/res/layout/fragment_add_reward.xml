@@ -8,8 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/reward_name_hint"
-        android:layout_marginBottom="@dimen/form_space_medium"
-        android:layout_marginTop="@dimen/form_space_medium"/>
+        android:layout_margin="20dp" />
 
     <EditText
         android:id="@+id/reward_points_text"
@@ -17,6 +16,8 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:digits="0123456789"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="@dimen/form_space_medium"
         android:hint="@string/reward_points_hint"/>
 
 </LinearLayout>

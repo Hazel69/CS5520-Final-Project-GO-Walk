@@ -112,7 +112,7 @@ public class StepCountingService extends Service {
     };
 
     private int minutesSinceLastSyncWithFirebase = 0;
-    private final static int intervalForFirebaseSync = 10;
+    private final static int intervalForFirebaseSync = 1;
 
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
@@ -124,6 +124,10 @@ public class StepCountingService extends Service {
 
                 long lastRecordTime =
                         SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
+
+                if(lastRecordTime == 0) {
+                    return;
+                }
 
                 if (!DateUtils.isToday(lastRecordTime)) {
                     Log.d(TAG, "LastRecordTime " + lastRecordTime);
@@ -167,7 +171,6 @@ public class StepCountingService extends Service {
         intentFilter.addAction(ACTION_TIME_CHANGED);
         intentFilter.addAction(ACTION_DATE_CHANGED);
         registerReceiver(timeChangeListener, intentFilter);
-        // TODO: when to unregister shutdown listener?
         registerReceiver(shutDownListener, new IntentFilter(ACTION_SHUTDOWN));
     }
 
@@ -187,16 +190,18 @@ public class StepCountingService extends Service {
 
             long lastRecordTime = SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
 
-            if (DateUtils.isToday(lastRecordTime)) {
-                //if the last record date is today
-                stepOffset = SharedPreferencesUtil.getStepOffset(this);
-            } else {
-                //if the last record date is not today
-                LocalDate date =
-                        Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
-                saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
-                SharedPreferencesUtil.setStepOffset(this, 0);
-                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+            if (lastRecordTime != 0) {
+                if (DateUtils.isToday(lastRecordTime)) {
+                    //if the last record date is today
+                    stepOffset = SharedPreferencesUtil.getStepOffset(this);
+                } else {
+                    //if the last record date is not today
+                    LocalDate date =
+                            Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
+                    saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
+                    SharedPreferencesUtil.setStepOffset(this, 0);
+                    SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+                }
             }
             Log.v(TAG, "Retrieved step offset " + stepOffset);
             final boolean result = sensorManager.registerListener(sensorEventListener,
