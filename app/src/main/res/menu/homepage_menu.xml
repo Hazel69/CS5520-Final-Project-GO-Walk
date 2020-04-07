@@ -4,5 +4,6 @@
     <item android:id="@+id/share_menu_item"
         android:onClick="sendMessageSteps"
         android:title="@string/share_item_title"
-        app:showAsAction="never"/>
+        android:icon="@drawable/ic_share_1"
+        app:showAsAction="ifRoom"/>
 </menu>
