@@ -90,8 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void run() {
                 String username = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
                 String msgTitle = String.format(getString(R.string.send_steps_title), username);
-                //TODO: use actual steps
-                String msgBody = String.format(getString(R.string.send_steps_body), username, 10000);
+                String msgBody = String.format(getString(R.string.send_steps_body), username, SharedPreferencesUtil.getTodayStep(SettingsActivity.this));
                 FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
             }
         }).start();

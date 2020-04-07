@@ -125,6 +125,10 @@ public class StepCountingService extends Service {
                 long lastRecordTime =
                         SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
 
+                if(lastRecordTime == 0) {
+                    return;
+                }
+
                 if (!DateUtils.isToday(lastRecordTime)) {
                     Log.d(TAG, "LastRecordTime " + lastRecordTime);
                     //if the last record date is not today
@@ -187,16 +191,18 @@ public class StepCountingService extends Service {
 
             long lastRecordTime = SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
 
-            if (DateUtils.isToday(lastRecordTime)) {
-                //if the last record date is today
-                stepOffset = SharedPreferencesUtil.getStepOffset(this);
-            } else {
-                //if the last record date is not today
-                LocalDate date =
-                        Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
-                saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
-                SharedPreferencesUtil.setStepOffset(this, 0);
-                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+            if (lastRecordTime != 0) {
+                if (DateUtils.isToday(lastRecordTime)) {
+                    //if the last record date is today
+                    stepOffset = SharedPreferencesUtil.getStepOffset(this);
+                } else {
+                    //if the last record date is not today
+                    LocalDate date =
+                            Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
+                    saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
+                    SharedPreferencesUtil.setStepOffset(this, 0);
+                    SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+                }
             }
             Log.v(TAG, "Retrieved step offset " + stepOffset);
             final boolean result = sensorManager.registerListener(sensorEventListener,
