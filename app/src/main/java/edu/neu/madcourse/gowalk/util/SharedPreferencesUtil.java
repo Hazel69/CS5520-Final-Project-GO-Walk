@@ -8,6 +8,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import java.time.LocalDate;
+
 public final class SharedPreferencesUtil {
 
     private static final String TAG = SharedPreferencesUtil.class.getSimpleName();
@@ -18,9 +20,12 @@ public final class SharedPreferencesUtil {
     private static final String KEY_POINTS_GAINED_FOR_DAILY_GOAL = "points-gained-for-daily-goal";
     private static final String KEY_ACCUMULATE_POINTS = "accumulate-points";
     private static final String KEY_STEP_OFFSET = "step-offset";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_LAST_RECORD_TIME = "last-record-time";
 
     public static void setUserId(Context context, @Nullable String value) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
         String storedValue = sharedPreferences.getString(KEY_USER_ID, /* defValue= */ null);
 
         if (!TextUtils.isEmpty(storedValue)) {
@@ -35,7 +40,8 @@ public final class SharedPreferencesUtil {
 
     @Nullable
     public static String getUserId(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_USER_ID, /* defValue= */ null);
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_USER_ID, /*
+        defValue= */ null);
     }
 
     public static void setDailyStepGoal(Context context, int value) {
@@ -88,7 +94,8 @@ public final class SharedPreferencesUtil {
     }
 
     public static void setStepOffset(Context context, int value) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferences.edit().putInt(KEY_STEP_OFFSET, value).apply();
     }
 
@@ -96,4 +103,18 @@ public final class SharedPreferencesUtil {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_STEP_OFFSET, 0);
     }
 
+    public static String getUsername(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_USERNAME, "");
+    }
+
+    public static void setLastRecordTime(Context context, Long lastRecordTime) {
+        Log.d(TAG, "Save last record time: " + lastRecordTime);
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putLong(KEY_LAST_RECORD_TIME, lastRecordTime).apply();
+    }
+
+    public static Long getLastRecordTime(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getLong(KEY_LAST_RECORD_TIME, 0);
+    }
 }

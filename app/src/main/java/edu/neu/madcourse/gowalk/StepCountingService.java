@@ -15,7 +15,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -23,12 +22,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.PreferenceManager;
 
-import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 import edu.neu.madcourse.gowalk.activity.HomepageActivity;
-import edu.neu.madcourse.gowalk.model.DailyStep;
-import edu.neu.madcourse.gowalk.repository.DailyStepRepository;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 
@@ -51,17 +51,35 @@ public class StepCountingService extends Service {
      */
     private static final int REQUEST_CODE_HOMEPAGE_ACTIVITY = 1002;
 
-    private static DailyStepRepository dailyStepRepository;
+    private final MutableLiveData<Integer> currentStepLiveData = new MutableLiveData<>();
+    private final IBinder binder = new StepCountingBinder(this);
     private SensorManager sensorManager;
     private Sensor stepCountSensor;
     private NotificationManager notificationManager;
     private int currentStep;
+    private final BroadcastReceiver shutDownListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ACTION_SHUTDOWN)) {
+                Log.d(TAG, "Device is shutting down");
+                // since the sensor will be reset, we set the offset to be the negate of current
+                // step,
+                // so that we can get the current step back while device is reboot
+                SharedPreferencesUtil.setStepOffset(context, -currentStep);
+                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+            }
+        }
+    };
     private int stepOffset;
+
+    private boolean hasSendGoalCompletionForToday = false;
     /**
      * Last updated timestamp of the sensor event since the device boot in nanoseconds.
      */
     private long lastUpdatedTimestampSinceBootNanos;
-    private final MutableLiveData<Integer> currentStepLiveData = new MutableLiveData<>();
+    /**
+     * Alarm manager to send data to firebase very 10 minutes
+     */
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
@@ -73,14 +91,17 @@ public class StepCountingService extends Service {
                 }
                 Log.d(TAG, "Updating step count to " + event.values[0] +
                         " last updated timestamp is " + event.timestamp);
-                currentStep = (int) event.values[0] - stepOffset;
 
-                //if user achieve user's daily goal, use firebase to send notification
-                if (shouldSendGoalCompleteNotification(currentStep)) {
-                    //TODO: send goal completing message to firebase
+                currentStep = (int) event.values[0] - stepOffset;
+                if (!hasSendGoalCompletionForToday && currentStep >= SharedPreferencesUtil.getDailyStepGoal(StepCountingService.this)) {
+                    onDailyGoalComplete(currentStep);
                 }
+
                 //update UI of activity
                 currentStepLiveData.setValue(currentStep);
+
+                //update last record date in shared preference
+                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
 
                 //event's timestamp starts from when the phone is reboot
                 lastUpdatedTimestampSinceBootNanos = event.timestamp;
@@ -95,7 +116,6 @@ public class StepCountingService extends Service {
             Log.d(TAG, "Sensor " + sensor.getName() + " has accuracy changed to " + accuracy);
         }
     };
-
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -104,46 +124,28 @@ public class StepCountingService extends Service {
                     intent.getAction().equals(ACTION_DATE_CHANGED)) {
                 Log.v(TAG, "Time change event received.");
 
-                //the time of previous sensor change
-                long lastUpdatedTime = System.currentTimeMillis() - SystemClock.elapsedRealtime() +
-                        (long) (lastUpdatedTimestampSinceBootNanos / 1e6);
+                long lastRecordTime = SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
 
-                Log.d(TAG, "CurrentTimeStamp"+ new java.util.Date(System.currentTimeMillis()));
-                // lastUpdatedTimestampSinceBootNanos will be great than 0 only if onStartCommand has been called,
-                // and at least one SensorEvent has been received.
-                Log.d(TAG, "lastUpdatedTimestampSinceBootNanos " + lastUpdatedTimestampSinceBootNanos);
-                Log.d(TAG, "is lastUpdatedTime today" +DateUtils.isToday(lastUpdatedTime));
+                if (!DateUtils.isToday(lastRecordTime)) {
+                    Log.d(TAG, "LastRecordTime "+ lastRecordTime);
+                    //if the last record date is not today
+                    LocalDate date = Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
 
-                if (lastUpdatedTimestampSinceBootNanos > 0 && DateUtils.isToday(lastUpdatedTime)) {
-                    // we may lose some steps if the SensorEvent has not been received yet
-                    Log.d(TAG, "Saving data into DB, current step " + currentStep + " last updated " + lastUpdatedTime);
-                    //if the last updated time is the day before, save to db
-                    saveDataToDB(new Date(lastUpdatedTime), currentStep);
-
-                    stepOffset = currentStep;
+                    saveToFirebase(date, currentStep);
+                    hasSendGoalCompletionForToday = false;
+                    //add yesterday's step to offset
+                    stepOffset += currentStep;
                     SharedPreferencesUtil.setStepOffset(context, stepOffset);
-                    currentStep = 0;
 
-                    Log.d(TAG, "Current time " + lastUpdatedTimestampSinceBootNanos);
+                    Log.d(TAG, "set current step to 0");
+                    currentStep = 0;
+                    currentStepLiveData.setValue(currentStep);
                     updateNotification();
                 }
             }
         }
-    };
 
-    private final BroadcastReceiver shutDownListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ACTION_SHUTDOWN)) {
-                Log.d(TAG, "Device is shutting down");
-                // since the sensor will be reset, we set the offset to be the negate of current step,
-                // so that we can get the current step back while device is reboot
-                SharedPreferencesUtil.setStepOffset(context, -currentStep);
-            }
-        }
     };
-
-    private final IBinder binder = new StepCountingBinder(this);
 
     @Override
     public void onCreate() {
@@ -151,8 +153,6 @@ public class StepCountingService extends Service {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepCountSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        dailyStepRepository = new DailyStepRepository(getApplication());
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_TIME_TICK);
@@ -174,12 +174,24 @@ public class StepCountingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.i(TAG, "StepCountingService starts.");
-
         if (stepCountSensor != null) {
             Log.v(TAG, "Register listener to SensorManager");
-            stepOffset = SharedPreferencesUtil.getStepOffset(this);
+
+            long lastRecordTime = SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
+
+            if (DateUtils.isToday(lastRecordTime)) {
+                //if the last record date is today
+                stepOffset = SharedPreferencesUtil.getStepOffset(this);
+            } else {
+                //if the last record date is not today
+                LocalDate date = Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
+                saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
+                SharedPreferencesUtil.setStepOffset(this, 0);
+                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+            }
             Log.v(TAG, "Retrieved step offset " + stepOffset);
-            final boolean result = sensorManager.registerListener(sensorEventListener, stepCountSensor,
+            final boolean result = sensorManager.registerListener(sensorEventListener,
+                    stepCountSensor,
                     SensorManager.SENSOR_DELAY_FASTEST);
             if (!result) {
                 Log.e(TAG, "Failed to register listener to step count sensor");
@@ -226,6 +238,9 @@ public class StepCountingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        SharedPreferencesUtil.setStepOffset(this, -currentStep);
+        SharedPreferencesUtil.setLastRecordTime(this, System.currentTimeMillis());
+
         sensorManager.unregisterListener(sensorEventListener, stepCountSensor);
         unregisterReceiver(timeChangeListener);
     }
@@ -235,15 +250,40 @@ public class StepCountingService extends Service {
         return currentStepLiveData;
     }
 
-    private void saveDataToDB(Date date, int currentStep) {
-        DailyStep dailyStep = new DailyStep(date, currentStep);
-        dailyStepRepository.insertDailyStep(dailyStep);
+    private void saveToFirebase(LocalDate date, int currentStep) {
+        Log.d(TAG, "Saving data into Firebase, current step " + currentStep + " date " +
+                date.toString());
+
+        FCMUtil.sendDailyStep(SharedPreferencesUtil.getUserId(this),
+                SharedPreferencesUtil.getUsername(this), currentStep, date);
     }
 
-    private boolean shouldSendGoalCompleteNotification(int steps) {
-        Log.i(TAG, "Daily step goal:" + SharedPreferencesUtil.getDailyStepGoal(this));
-        return steps >= SharedPreferencesUtil.getDailyStepGoal(this);
+    private void onDailyGoalComplete(int steps) {
+        sendGoalCompletionMsgToFirebase(steps);
+        SharedPreferencesUtil.setAccumulatePoints(this, SharedPreferencesUtil.getAccumulatePoints(this) + SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
     }
+
+    private void sendGoalCompletionMsgToFirebase(int steps) {
+        String username;
+        if (SharedPreferencesUtil.getUsername(this).equals("")) {
+            username = "A user";
+        } else {
+            username = SharedPreferencesUtil.getUsername(this);
+        }
+
+        hasSendGoalCompletionForToday = true;
+
+
+        String msgTitle = getString(R.string.goal_completion_title, username);
+        String msgBody = getString(R.string.goal_completion_body, username, steps, SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.goal_completion_topic));
+            }
+        }).start();
+    }
+
 
     public static class StepCountingBinder extends Binder {
 

@@ -95,6 +95,7 @@ public class HomepageActivity extends AppCompatActivity {
                 Log.d(TAG, "StepCountingService disconnected");
             }
         };
+
         bindService(new Intent(this, StepCountingService.class), serviceConnection,
                 BIND_AUTO_CREATE);
         //todo: these code are for testing, delete when implement the actual logic
