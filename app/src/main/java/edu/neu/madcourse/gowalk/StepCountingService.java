@@ -239,7 +239,7 @@ public class StepCountingService extends Service {
                 .setContentTitle("GO WALK! Your current step is")
                 .setContentText(String.valueOf(currentStep))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.homepage_icon)
+                .setSmallIcon(R.drawable.footprint)
                 .build();
     }
 
