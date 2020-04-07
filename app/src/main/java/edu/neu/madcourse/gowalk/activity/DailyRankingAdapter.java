@@ -3,6 +3,7 @@ package edu.neu.madcourse.gowalk.activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapte
     public void onBindViewHolder(@NonNull DailyRankingAdapter.ItemViewHolder holder, int position) {
         if (dailyRankList != null && !dailyRankList.isEmpty()) {
             DailyStepF target = dailyRankList.get(position);
+            holder.firstPlaceView.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
             holder.rankView.setText(Integer.toString(position + 1));
             holder.usernameView.setText(target.getUsername());
             holder.stepCountView.setText(Integer.toString(target.getStepCount()));
@@ -43,12 +45,14 @@ public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapte
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView firstPlaceView;
         private final TextView rankView;
         private final TextView usernameView;
         private final TextView stepCountView;
 
         ItemViewHolder(@NonNull final View itemView) {
             super(itemView);
+            firstPlaceView = itemView.findViewById(R.id.icon_view);
             rankView = itemView.findViewById(R.id.dailyRank);
             usernameView = itemView.findViewById(R.id.dailyRankUserName);
             stepCountView = itemView.findViewById(R.id.dailyRankStepCount);

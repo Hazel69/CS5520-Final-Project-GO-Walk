@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -87,10 +88,10 @@ public class SettingsActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String userId = SharedPreferencesUtil.getUserId(getApplicationContext());
-                String msgTitle = String.format(getString(R.string.send_steps_title), userId);
+                String username = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
+                String msgTitle = String.format(getString(R.string.send_steps_title), username);
                 //TODO: use actual steps
-                String msgBody = String.format(getString(R.string.send_steps_body), userId, 10000);
+                String msgBody = String.format(getString(R.string.send_steps_body), username, 10000);
                 FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
             }
         }).start();
