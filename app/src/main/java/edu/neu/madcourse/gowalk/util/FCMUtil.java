@@ -80,6 +80,7 @@ public final class FCMUtil {
         DatabaseReference stepDatabase = FirebaseDatabase.getInstance().getReference()
                 .child("dailySteps");
 
+        Log.d(TAG, "sent daily step to firebase");
         DailyStepF dailyStepF = new DailyStepF(userId, username, date.toString(), steps);
         stepDatabase.child(date.toString()).child(userId).setValue(dailyStepF);
     }

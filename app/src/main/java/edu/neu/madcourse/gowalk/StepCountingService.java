@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.preference.PreferenceManager;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,7 +49,6 @@ public class StepCountingService extends Service {
      * Used to launch HomepageActivity when touching the notification.
      */
     private static final int REQUEST_CODE_HOMEPAGE_ACTIVITY = 1002;
-
     private final MutableLiveData<Integer> currentStepLiveData = new MutableLiveData<>();
     private final IBinder binder = new StepCountingBinder(this);
     private SensorManager sensorManager;
@@ -66,21 +64,17 @@ public class StepCountingService extends Service {
                 // step,
                 // so that we can get the current step back while device is reboot
                 SharedPreferencesUtil.setStepOffset(context, -currentStep);
-                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this,
+                        System.currentTimeMillis());
             }
         }
     };
     private int stepOffset;
-
     private boolean hasSendGoalCompletionForToday = false;
     /**
      * Last updated timestamp of the sensor event since the device boot in nanoseconds.
      */
     private long lastUpdatedTimestampSinceBootNanos;
-    /**
-     * Alarm manager to send data to firebase very 10 minutes
-     */
-
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -96,12 +90,12 @@ public class StepCountingService extends Service {
                 if (!hasSendGoalCompletionForToday && currentStep >= SharedPreferencesUtil.getDailyStepGoal(StepCountingService.this)) {
                     onDailyGoalComplete(currentStep);
                 }
-
                 //update UI of activity
                 currentStepLiveData.setValue(currentStep);
 
                 //update last record date in shared preference
-                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
+                SharedPreferencesUtil.setLastRecordTime(StepCountingService.this,
+                        System.currentTimeMillis());
 
                 //event's timestamp starts from when the phone is reboot
                 lastUpdatedTimestampSinceBootNanos = event.timestamp;
@@ -116,6 +110,10 @@ public class StepCountingService extends Service {
             Log.d(TAG, "Sensor " + sensor.getName() + " has accuracy changed to " + accuracy);
         }
     };
+
+    private int minutesSinceLastSyncWithFirebase = 0;
+    private final static int intervalForFirebaseSync = 10;
+
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -124,12 +122,14 @@ public class StepCountingService extends Service {
                     intent.getAction().equals(ACTION_DATE_CHANGED)) {
                 Log.v(TAG, "Time change event received.");
 
-                long lastRecordTime = SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
+                long lastRecordTime =
+                        SharedPreferencesUtil.getLastRecordTime(StepCountingService.this);
 
                 if (!DateUtils.isToday(lastRecordTime)) {
-                    Log.d(TAG, "LastRecordTime "+ lastRecordTime);
+                    Log.d(TAG, "LastRecordTime " + lastRecordTime);
                     //if the last record date is not today
-                    LocalDate date = Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate date =
+                            Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
 
                     saveToFirebase(date, currentStep);
                     hasSendGoalCompletionForToday = false;
@@ -141,7 +141,15 @@ public class StepCountingService extends Service {
                     currentStep = 0;
                     currentStepLiveData.setValue(currentStep);
                     updateNotification();
+                } else {
+                    if (minutesSinceLastSyncWithFirebase >= intervalForFirebaseSync) {
+                        saveToFirebase(LocalDate.now(), currentStep);
+                        minutesSinceLastSyncWithFirebase = 0;
+                    } else {
+                        minutesSinceLastSyncWithFirebase++;
+                    }
                 }
+
             }
         }
 
@@ -184,7 +192,8 @@ public class StepCountingService extends Service {
                 stepOffset = SharedPreferencesUtil.getStepOffset(this);
             } else {
                 //if the last record date is not today
-                LocalDate date = Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate date =
+                        Instant.ofEpochMilli(lastRecordTime).atZone(ZoneId.systemDefault()).toLocalDate();
                 saveToFirebase(date, -SharedPreferencesUtil.getStepOffset(this));
                 SharedPreferencesUtil.setStepOffset(this, 0);
                 SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
@@ -260,7 +269,8 @@ public class StepCountingService extends Service {
 
     private void onDailyGoalComplete(int steps) {
         sendGoalCompletionMsgToFirebase(steps);
-        SharedPreferencesUtil.setAccumulatePoints(this, SharedPreferencesUtil.getAccumulatePoints(this) + SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
+        SharedPreferencesUtil.setAccumulatePoints(this,
+                SharedPreferencesUtil.getAccumulatePoints(this) + SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
     }
 
     private void sendGoalCompletionMsgToFirebase(int steps) {
@@ -275,11 +285,13 @@ public class StepCountingService extends Service {
 
 
         String msgTitle = getString(R.string.goal_completion_title, username);
-        String msgBody = getString(R.string.goal_completion_body, username, steps, SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
+        String msgBody = getString(R.string.goal_completion_body, username, steps,
+                SharedPreferencesUtil.getPointsGainedForDailyGoal(this));
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.goal_completion_topic));
+                FCMUtil.sendMessageToTopic(msgTitle, msgBody,
+                        getString(R.string.goal_completion_topic));
             }
         }).start();
     }
