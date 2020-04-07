@@ -15,17 +15,10 @@ public class Reward {
 
     private int points;
 
-//    //todo: does the userId needed? cause in local database, it only stores the reward fo one user
-//    @ForeignKey(entity = User.class,
-//            parentColumns = "uid",
-//            childColumns = "userId",
-//            onDelete = ForeignKey.CASCADE)
-//    private int userId;
 
     public Reward(String name, int points) {
         this.name = name;
         this.points = points;
-//        this.userId = userId;
     }
 
     public int getPoints() {
@@ -52,15 +45,7 @@ public class Reward {
         this.name = name;
     }
 
-//    public int getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(int userId) {
-//        this.userId = userId;
-//    }
 
-    //for testing
     @NonNull
     @Override
     public String toString() {

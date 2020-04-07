@@ -9,14 +9,14 @@
     <lecho.lib.hellocharts.view.ColumnChartView
         android:id="@+id/column_chart"
         android:layout_width="match_parent"
-        android:layout_height="306dp"
-        android:layout_marginTop="16dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/no_data_text_view"
         android:layout_width="match_parent"
-        android:layout_height="306dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
         android:background="#F9F9F9" />
 
     <ImageView

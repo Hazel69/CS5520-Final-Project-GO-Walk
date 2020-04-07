@@ -112,7 +112,7 @@ public class StepCountingService extends Service {
     };
 
     private int minutesSinceLastSyncWithFirebase = 0;
-    private final static int intervalForFirebaseSync = 10;
+    private final static int intervalForFirebaseSync = 1;
 
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
@@ -171,7 +171,6 @@ public class StepCountingService extends Service {
         intentFilter.addAction(ACTION_TIME_CHANGED);
         intentFilter.addAction(ACTION_DATE_CHANGED);
         registerReceiver(timeChangeListener, intentFilter);
-        // TODO: when to unregister shutdown listener?
         registerReceiver(shutDownListener, new IntentFilter(ACTION_SHUTDOWN));
     }
 

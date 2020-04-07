@@ -12,13 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 
 public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapter.ItemViewHolder> {
-    private List<DailyStepF> dailyRankList;
+    private List<DailyStep> dailyRankList;
+    private String userId;
 
-    public DailyRankingAdapter(List<DailyStepF> dailyRankList) {
+    public DailyRankingAdapter(List<DailyStep> dailyRankList, String userId) {
         this.dailyRankList = dailyRankList;
+        this.userId = userId;
     }
 
     @NonNull
@@ -31,10 +33,18 @@ public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapte
     @Override
     public void onBindViewHolder(@NonNull DailyRankingAdapter.ItemViewHolder holder, int position) {
         if (dailyRankList != null && !dailyRankList.isEmpty()) {
-            DailyStepF target = dailyRankList.get(position);
+            DailyStep target = dailyRankList.get(position);
             holder.firstPlaceView.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
             holder.rankView.setText(Integer.toString(position + 1));
-            holder.usernameView.setText(target.getUsername());
+            String username = target.getUsername();
+            if (username == null || username.isEmpty()) {
+                username = "Anonymous";
+            }
+
+            if (target.getUserId().equals(userId)) {
+                username = "Me";
+            }
+            holder.usernameView.setText(username);
             holder.stepCountView.setText(Integer.toString(target.getStepCount()));
         }
     }

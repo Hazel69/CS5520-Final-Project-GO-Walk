@@ -2,10 +2,10 @@ package edu.neu.madcourse.gowalk.activity;
 
 import android.Manifest;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -13,13 +13,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,11 +30,8 @@ import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.StepCountingService;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
-import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
-import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
-import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.PieChartView;
 
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
@@ -44,11 +39,7 @@ import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGo
 public class HomepageActivity extends AppCompatActivity {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
-
     private static final int REQUEST_CODE_ACTIVITY_RECOGNITION_PERMISSION = 1002;
-
-    private RewardListViewModel rewardListViewModel;
-    private DailyStepViewModel dailyStepViewModel;
 
     private PieChartView pieChartView;
     private BottomNavigationView bottomNav;
@@ -61,10 +52,6 @@ public class HomepageActivity extends AppCompatActivity {
         setContentView(R.layout.homepage_activity);
 
         pieChartView = findViewById(R.id.pie_chart);
-
-        //todo: should fetch this data from db or SharedPreference
-        int defaultCurrentStep = 0;
-        populatePieChart(defaultCurrentStep, getDailyStepGoal(this));
 
         subscribeToTopic(getString(R.string.goal_completion_topic));
         subscribeToTopic(getString(R.string.steps_topic));
@@ -122,30 +109,6 @@ public class HomepageActivity extends AppCompatActivity {
             }
         }
 
-        //todo: these code are for testing, delete when implement the actual logic
-//        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
-//        findViewById(R.id.add_reward).setOnClickListener(view -> {
-//            Reward reward = new Reward("switch", "I want a switch", 200);
-//            rewardListViewModel.addReward(reward);
-//        });
-//
-//        rewardListViewModel.getRewards().observe(this, rewards ->
-//                System.out.println(Arrays.toString(rewards.toArray())));
-//
-//        findViewById(R.id.delete_reward).setOnClickListener(view -> {
-//            rewardListViewModel.deleteReward(rewardListViewModel.getRewards().getValue().get(0));
-//        });
-//
-//        dailyStepViewModel = ViewModelProviders.of(this).get(DailyStepViewModel.class);
-//        findViewById(R.id.add_daily_step).setOnClickListener(view -> {
-//            DailyStep dailyStep = new DailyStep(new Date(Calendar.getInstance().getTimeInMillis
-//            ()), 200);
-//            dailyStepViewModel.addDailyStep(dailyStep);
-//        });
-//
-//        dailyStepViewModel.getDailyStepRecords().observe(this, dailySteps ->
-//                System.out.println(Arrays.toString(dailySteps.toArray())));
-
     }
 
     @Override
@@ -181,11 +144,6 @@ public class HomepageActivity extends AppCompatActivity {
         return true;
     }
 
-    public void directToReport(View view) {
-        Intent intent = new Intent(this, ReportActivity.class);
-        startActivity(intent);
-    }
-
     public void directToDailyRanking() {
         Intent intent = new Intent(this, DailyRankActivity.class);
         startActivity(intent);
@@ -201,23 +159,23 @@ public class HomepageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     private void populatePieChart(int currentStep, int dailyGoal) {
-        currentStep = Math.min(currentStep, dailyGoal);
-        SliceValue completedSliceValue = new SliceValue(currentStep, ChartUtils.pickColor());
+        int displayCurrentStep = Math.min(currentStep, dailyGoal);
+        SliceValue completedSliceValue = new SliceValue(displayCurrentStep, Color.parseColor("#6AC199"));
         SliceValue remainingSliceValue =
-                new SliceValue(dailyGoal - currentStep, ChartUtils.pickColor());
+                new SliceValue(dailyGoal - displayCurrentStep, Color.parseColor("#FB6734"));
 
         List<SliceValue> values = new ArrayList<>();
         values.add(completedSliceValue);
         values.add(remainingSliceValue);
 
         PieChartData data = new PieChartData(values);
-        data.setHasLabels(true);
+        data.setHasLabelsOnlyForSelected(true);
+        data.setHasLabelsOutside(true);
         data.setHasCenterCircle(true);
-        data.setSlicesSpacing(24);
+        data.setSlicesSpacing(8);
         data.setCenterText1(String.valueOf(currentStep));
-
+        data.setCenterText1FontSize(30);
         pieChartView.setPieChartData(data);
     }
 
@@ -238,7 +196,6 @@ public class HomepageActivity extends AppCompatActivity {
                 String username =
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
                 String msgTitle = String.format(getString(R.string.send_steps_title), username);
-                //TODO: use actual steps
                 String msgBody = String.format(getString(R.string.send_steps_body), username,
                         SharedPreferencesUtil.getTodayStep(HomepageActivity.this));
                 FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));

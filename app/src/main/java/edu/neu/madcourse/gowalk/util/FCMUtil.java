@@ -18,7 +18,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 
 public final class FCMUtil {
     private static final String TAG = FCMUtil.class.getSimpleName();
@@ -28,7 +28,6 @@ public final class FCMUtil {
         JSONObject jPayload = new JSONObject();
         JSONObject jNotification = new JSONObject();
         try {
-            //TODO: Get the username, daily goal and steps
 //            jNotification.put("message", "Jessie Meets Daily Goal!");
             jNotification.put("title", msgTitle);
             jNotification.put("body", msgBody);
@@ -81,7 +80,7 @@ public final class FCMUtil {
                 .child("dailySteps");
 
         Log.d(TAG, "sent daily step to firebase");
-        DailyStepF dailyStepF = new DailyStepF(userId, username, date.toString(), steps);
+        DailyStep dailyStepF = new DailyStep(userId, username, date.toString(), steps);
         stepDatabase.child(date.toString()).child(userId).setValue(dailyStepF);
     }
 
