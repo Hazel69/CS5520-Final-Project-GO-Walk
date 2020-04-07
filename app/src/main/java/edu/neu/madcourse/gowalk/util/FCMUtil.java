@@ -28,7 +28,6 @@ public final class FCMUtil {
         JSONObject jPayload = new JSONObject();
         JSONObject jNotification = new JSONObject();
         try {
-            //TODO: Get the username, daily goal and steps
 //            jNotification.put("message", "Jessie Meets Daily Goal!");
             jNotification.put("title", msgTitle);
             jNotification.put("body", msgBody);

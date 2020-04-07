@@ -26,14 +26,13 @@
 
     <string name="goal_completion_topic">GoalCompletion</string>
     <string name="goal_completion_title">Message from %1$s</string>
-    <string name="goal_completion_body">%s has achieved daily goal of %d steps and earn %d points.</string>
-
+    <string name="goal_completion_body">%s has walked %d steps and earn %d points by achieving daily goal.</string>
 
     <string name="title_activity_rewards">RewardsActivity</string>
 
     <!-- Add reward hint -->
-    <string name="reward_name_hint">Please enter name of the reward</string>
-    <string name="reward_points_hint">Please enter points of the reward</string>
+    <string name="reward_name_hint">Name of the reward</string>
+    <string name="reward_points_hint">Points of the reward</string>
 
     <string name="reward_points">%d points</string>
 

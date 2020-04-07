@@ -2,6 +2,7 @@ package edu.neu.madcourse.gowalk.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ public final class SharedPreferencesUtil {
     private static final String KEY_STEP_OFFSET = "step-offset";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_LAST_RECORD_TIME = "last-record-time";
+    private static final String KEY_TODAY_STEP = "today-step";
 
     public static void setUserId(Context context, @Nullable String value) {
         SharedPreferences sharedPreferences =
@@ -117,4 +119,15 @@ public final class SharedPreferencesUtil {
     public static Long getLastRecordTime(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getLong(KEY_LAST_RECORD_TIME, 0);
     }
+
+    public static void setTodayStep(Context context, int steps) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putInt(KEY_TODAY_STEP, steps).apply();
+    }
+
+    public static int getTodayStep(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_TODAY_STEP, 0);
+    }
+
 }
