@@ -136,6 +136,8 @@ public class StepCountingService extends Service {
                     //add yesterday's step to offset
                     stepOffset += currentStep;
                     SharedPreferencesUtil.setStepOffset(context, stepOffset);
+                    //set the last record time to today
+                    SharedPreferencesUtil.setLastRecordTime(StepCountingService.this, System.currentTimeMillis());
 
                     Log.d(TAG, "set current step to 0");
                     currentStep = 0;
@@ -243,6 +245,7 @@ public class StepCountingService extends Service {
                 .build();
     }
 
+    //when the service is force stopped, onDestroy may not be called
     @Override
     public void onDestroy() {
         super.onDestroy();
