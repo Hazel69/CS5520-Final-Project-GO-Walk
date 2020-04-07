@@ -4,6 +4,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +15,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Scanner;
+
+import edu.neu.madcourse.gowalk.model.DailyStepF;
 
 public final class FCMUtil {
     private static final String TAG = FCMUtil.class.getSimpleName();
@@ -69,4 +75,14 @@ public final class FCMUtil {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next().replace(",", ",\n") : "";
     }
+
+    public static void sendDailyStep(String userId, String username, int steps, LocalDate date) {
+        DatabaseReference stepDatabase = FirebaseDatabase.getInstance().getReference()
+                .child("dailySteps");
+
+        Log.d(TAG, "sent daily step to firebase");
+        DailyStepF dailyStepF = new DailyStepF(userId, username, date.toString(), steps);
+        stepDatabase.child(date.toString()).child(userId).setValue(dailyStepF);
+    }
+
 }

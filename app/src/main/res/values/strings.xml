@@ -9,7 +9,6 @@
     <string name="share_item_title">Share Steps</string>
     <string name="no_chart_data">No step data yet!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
@@ -24,7 +23,11 @@
     <string name="steps_topic">MessageSteps</string>
     <string name="send_steps_title">Message from %1$s</string>
     <string name="send_steps_body">%1$s achieves %2$d steps today!!!</string>
+
     <string name="goal_completion_topic">GoalCompletion</string>
+    <string name="goal_completion_title">Message from %1$s</string>
+    <string name="goal_completion_body">%s has achieved daily goal of %d steps and earn %d points.</string>
+
 
     <string name="title_activity_rewards">RewardsActivity</string>
 
