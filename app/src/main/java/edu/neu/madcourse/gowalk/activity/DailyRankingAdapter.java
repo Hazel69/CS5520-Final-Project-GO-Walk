@@ -16,9 +16,11 @@ import edu.neu.madcourse.gowalk.model.DailyStepF;
 
 public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapter.ItemViewHolder> {
     private List<DailyStepF> dailyRankList;
+    private String userId;
 
-    public DailyRankingAdapter(List<DailyStepF> dailyRankList) {
+    public DailyRankingAdapter(List<DailyStepF> dailyRankList, String userId) {
         this.dailyRankList = dailyRankList;
+        this.userId = userId;
     }
 
     @NonNull
@@ -34,7 +36,15 @@ public class DailyRankingAdapter extends RecyclerView.Adapter<DailyRankingAdapte
             DailyStepF target = dailyRankList.get(position);
             holder.firstPlaceView.setVisibility(position == 0 ? View.VISIBLE : View.INVISIBLE);
             holder.rankView.setText(Integer.toString(position + 1));
-            holder.usernameView.setText(target.getUsername());
+            String username = target.getUsername();
+            if (username == null || username.isEmpty()) {
+                username = "Anonymous";
+            }
+
+            if (target.getUserId().equals(userId)) {
+                username = "Me";
+            }
+            holder.usernameView.setText(username);
             holder.stepCountView.setText(Integer.toString(target.getStepCount()));
         }
     }

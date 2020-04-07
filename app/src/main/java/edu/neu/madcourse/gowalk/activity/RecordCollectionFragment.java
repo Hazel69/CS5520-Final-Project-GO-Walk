@@ -17,8 +17,6 @@ import edu.neu.madcourse.gowalk.R;
 
 public class RecordCollectionFragment extends Fragment {
 
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
     private RecordCollectionAdapter recordCollectionAdapter;
     private ViewPager2 viewPager;
     private static final String[] intervals = {"WEEKLY", "MONTHLY"};

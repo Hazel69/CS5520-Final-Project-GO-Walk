@@ -16,7 +16,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,9 +26,6 @@ import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
-import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
-import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
-import edu.neu.madcourse.gowalk.viewmodel.RewardListViewModel;
 
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
@@ -41,10 +37,6 @@ import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGo
 public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
-
-    private RewardListViewModel rewardListViewModel;
-    private DailyStepViewModel dailyStepViewModel;
-
     private PieChartView pieChartView;
     private SensorManager sensorManager;
     private Sensor stepCountSensor;
@@ -101,28 +93,6 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
 
 
         //todo: these code are for testing, delete when implement the actual logic
-//        rewardListViewModel = ViewModelProviders.of(this).get(RewardListViewModel.class);
-//        findViewById(R.id.add_reward).setOnClickListener(view -> {
-//            Reward reward = new Reward("switch", "I want a switch", 200);
-//            rewardListViewModel.addReward(reward);
-//        });
-//
-//        rewardListViewModel.getRewards().observe(this, rewards ->
-//                System.out.println(Arrays.toString(rewards.toArray())));
-//
-//        findViewById(R.id.delete_reward).setOnClickListener(view -> {
-//            rewardListViewModel.deleteReward(rewardListViewModel.getRewards().getValue().get(0));
-//        });
-//
-//        dailyStepViewModel = ViewModelProviders.of(this).get(DailyStepViewModel.class);
-//        findViewById(R.id.add_daily_step).setOnClickListener(view -> {
-//            DailyStep dailyStep = new DailyStep(new Date(Calendar.getInstance().getTimeInMillis()), 200);
-//            dailyStepViewModel.addDailyStep(dailyStep);
-//        });
-//
-//        dailyStepViewModel.getDailyStepRecords().observe(this, dailySteps ->
-//                System.out.println(Arrays.toString(dailySteps.toArray())));
-
     }
 
     @Override

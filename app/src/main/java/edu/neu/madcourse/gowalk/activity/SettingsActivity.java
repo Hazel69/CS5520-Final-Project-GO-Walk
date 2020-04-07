@@ -18,7 +18,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.neu.madcourse.gowalk.R;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
-import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 
 public class SettingsActivity extends AppCompatActivity {
 

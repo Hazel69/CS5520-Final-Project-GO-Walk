@@ -7,17 +7,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import edu.neu.madcourse.gowalk.dao.DailyStepDao;
 import edu.neu.madcourse.gowalk.dao.RewardDao;
-import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.model.Reward;
 
-@Database(entities = {Reward.class, DailyStep.class}, version = 1)
+@Database(entities = {Reward.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RewardDao rewardDao();
-    public abstract DailyStepDao dailyStepDao();
 
     private static AppDatabase INSTANCE;
 

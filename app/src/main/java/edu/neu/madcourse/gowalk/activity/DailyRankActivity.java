@@ -43,7 +43,7 @@ public class DailyRankActivity extends AppCompatActivity {
 
         dailyRankViewModel = ViewModelProviders.of(this).get(DailyRankViewModel.class);
         dailyRankViewModel.getDailyRankListLiveData().observe(this, mDailySteps -> {
-            recyclerView.setAdapter(new DailyRankingAdapter(mDailySteps));
+            recyclerView.setAdapter(new DailyRankingAdapter(mDailySteps, SharedPreferencesUtil.getUserId(getApplicationContext())));
         });
 
         bottomNav = findViewById(R.id.bottom_nav);
