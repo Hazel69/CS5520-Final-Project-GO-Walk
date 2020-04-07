@@ -4,27 +4,27 @@
     <item
         android:id="@+id/homepageBtn"
         android:enabled="true"
-        android:icon="@drawable/homepage_icon"
+        android:icon="@drawable/ic_home_1"
         android:title="Home"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/rankBtn"
         android:enabled="true"
-        android:icon="@drawable/daily_rank_icon"
+        android:icon="@drawable/ic_rank_1"
         android:title="Ranking"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/rewardBtn"
         android:enabled="true"
-        android:icon="@drawable/ic_redeem"
+        android:icon="@drawable/ic_redeem_1"
         android:title="Rewards"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/goalSettingBtn"
         android:enabled="true"
-        android:icon="@drawable/settings_icon"
+        android:icon="@drawable/ic_settings_1"
         android:title="Setting"
         app:showAsAction="ifRoom" />
 

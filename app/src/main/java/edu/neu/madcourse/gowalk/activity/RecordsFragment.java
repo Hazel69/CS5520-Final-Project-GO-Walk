@@ -141,7 +141,7 @@ public class RecordsFragment extends Fragment {
             columnChartData.setAxisXBottom(new Axis(xAxisValues)
                     .setTextSize(11).setMaxLabelChars(4).setTextColor(Color.BLACK));
             columnChartData.setAxisYLeft(new Axis()
-                    .setHasLines(true).setTextSize(11).setMaxLabelChars(5).setTextColor(Color.BLACK));
+                    .setTextSize(11).setMaxLabelChars(5).setTextColor(Color.BLACK));
         } else {
             columnChartData.setAxisXBottom(null);
             columnChartData.setAxisYLeft(null);
