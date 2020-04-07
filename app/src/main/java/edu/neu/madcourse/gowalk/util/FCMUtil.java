@@ -18,7 +18,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 
 public final class FCMUtil {
     private static final String TAG = FCMUtil.class.getSimpleName();
@@ -81,7 +81,7 @@ public final class FCMUtil {
                 .child("dailySteps");
 
         Log.d(TAG, "sent daily step to firebase");
-        DailyStepF dailyStepF = new DailyStepF(userId, username, date.toString(), steps);
+        DailyStep dailyStepF = new DailyStep(userId, username, date.toString(), steps);
         stepDatabase.child(date.toString()).child(userId).setValue(dailyStepF);
     }
 

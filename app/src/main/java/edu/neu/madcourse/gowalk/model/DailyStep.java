@@ -1,46 +1,27 @@
 package edu.neu.madcourse.gowalk.model;
 
-
 import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-import java.sql.Date;
-
-@Entity(tableName = "dailySteps")
 public class DailyStep {
-
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    private int id;
-
-    private Date date;
-
+    private String date;
     private int stepCount;
+    private String userId;
+    private String username;
 
-//    //todo: does the userId needed? cause in local database, if it only stores the reward fo one user
-//    @ForeignKey(entity = User.class,
-//                    parentColumns = "uid",
-//                    childColumns = "userId",
-//                    onDelete = ForeignKey.CASCADE)
-//    private int userId;
+    public DailyStep() {}
 
-//    public DailyStep(Date date, int stepCount, int userId) {
-//        this.date = date;
-//        this.stepCount = stepCount;
-//        this.userId = userId;
-//    }
-
-    public DailyStep(Date date, int stepCount) {
+    public DailyStep(String userId, String username, String date, int stepCount) {
         this.date = date;
         this.stepCount = stepCount;
+        this.userId = userId;
+        this.username = username;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -52,25 +33,25 @@ public class DailyStep {
         this.stepCount = stepCount;
     }
 
-//    public int getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(int userId) {
-//        this.userId = userId;
-//    }
-//
-    public int getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    //for testing
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
+    @NonNull
     public String toString() {
-        return this.date.toString() + " "+this.stepCount;
+        return String.format("%s on %s: %d steps", username, date, stepCount);
     }
 }

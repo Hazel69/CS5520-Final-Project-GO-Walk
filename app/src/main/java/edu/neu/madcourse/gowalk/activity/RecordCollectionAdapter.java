@@ -18,7 +18,6 @@ public class RecordCollectionAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // Return a NEW fragment instance in createFragment(int)
         Fragment fragment = new RecordsFragment();
         Bundle args = new Bundle();
         args.putString(RecordsFragment.ARG_INTERVAL, intervals[position]);

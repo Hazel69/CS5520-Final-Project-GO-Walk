@@ -16,14 +16,14 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.repository.FirebaseQueryLiveData;
 
 public class DailyRankViewModel extends AndroidViewModel {
     private static final Query mQuery =
             FirebaseDatabase.getInstance().getReference().child("dailySteps")
                     .child(LocalDate.now().toString()).orderByChild("stepCount");
-    private List<DailyStepF> mQueryDailyStepList;
+    private List<DailyStep> mQueryDailyStepList;
 
     public DailyRankViewModel(@NonNull Application application) {
         super(application);
@@ -31,20 +31,20 @@ public class DailyRankViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public LiveData<List<DailyStepF>> getDailyRankListLiveData() {
+    public LiveData<List<DailyStep>> getDailyRankListLiveData() {
         FirebaseQueryLiveData mLiveData = new FirebaseQueryLiveData(mQuery);
 
         return Transformations.map(mLiveData, new Deserializer());
     }
 
-    private class Deserializer implements Function<DataSnapshot, List<DailyStepF>> {
+    private class Deserializer implements Function<DataSnapshot, List<DailyStep>> {
 
         @Override
-        public List<DailyStepF> apply(DataSnapshot dataSnapshot) {
+        public List<DailyStep> apply(DataSnapshot dataSnapshot) {
             mQueryDailyStepList.clear();
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                DailyStepF dailyStep = snapshot.getValue(DailyStepF.class);
+                DailyStep dailyStep = snapshot.getValue(DailyStep.class);
                 mQueryDailyStepList.add(0, dailyStep);
             }
 

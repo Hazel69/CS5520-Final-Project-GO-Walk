@@ -15,7 +15,7 @@ import com.google.firebase.database.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.repository.FirebaseQueryLiveData;
 import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 
@@ -27,8 +27,8 @@ public class DailyStepViewModel extends AndroidViewModel {
             FirebaseDatabase.getInstance().getReference().child("dailySteps")
                     .orderByKey().limitToLast(30);
 
-    private List<DailyStepF> _weeklyStepRecords;
-    private List<DailyStepF> _monthlyStepRecords;
+    private List<DailyStep> _weeklyStepRecords;
+    private List<DailyStep> _monthlyStepRecords;
 
     public DailyStepViewModel(Application application) {
         super(application);
@@ -37,33 +37,33 @@ public class DailyStepViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public LiveData<List<DailyStepF>> getWeeklyStepRecordsLiveData() {
+    public LiveData<List<DailyStep>> getWeeklyStepRecordsLiveData() {
         FirebaseQueryLiveData weeklyStepLiveData = new FirebaseQueryLiveData(weeklyQuery);
         return Transformations.map(weeklyStepLiveData, new Deserializer(_weeklyStepRecords));
     }
 
     @NonNull
-    public LiveData<List<DailyStepF>> getMonthlyStepRecordsLiveData() {
+    public LiveData<List<DailyStep>> getMonthlyStepRecordsLiveData() {
         FirebaseQueryLiveData monthlyStepLiveData = new FirebaseQueryLiveData(monthlyQuery);
         return Transformations.map(monthlyStepLiveData, new Deserializer(_monthlyStepRecords));
     }
 
-    private class Deserializer implements Function<DataSnapshot, List<DailyStepF>> {
-        private List<DailyStepF> data;
+    private class Deserializer implements Function<DataSnapshot, List<DailyStep>> {
+        private List<DailyStep> data;
 
-        Deserializer(List<DailyStepF> data) {
+        Deserializer(List<DailyStep> data) {
             this.data = data;
         }
 
         @Override
-        public List<DailyStepF> apply(DataSnapshot dataSnapshot) {
+        public List<DailyStep> apply(DataSnapshot dataSnapshot) {
             data.clear();
 
             String userId = SharedPreferencesUtil.getUserId(getApplication());
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     if (snapshot1.getKey() != null && snapshot1.getKey().equals(userId)) {
-                        DailyStepF dailyStep = snapshot1.getValue(DailyStepF.class);
+                        DailyStep dailyStep = snapshot1.getValue(DailyStep.class);
                         data.add(dailyStep);
                     }
                 }

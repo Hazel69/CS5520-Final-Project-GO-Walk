@@ -19,17 +19,24 @@ import java.util.Calendar;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 
 public class RecordsFragment extends Fragment {
+    public static final int COLOR_BLUE = Color.parseColor("#33B5E5");
+    public static final int COLOR_VIOLET = Color.parseColor("#AA66CC");
+    public static final int COLOR_GREEN = Color.parseColor("#99CC00");
+    public static final int COLOR_ORANGE = Color.parseColor("#FFBB33");
+    public static final int COLOR_RED = Color.parseColor("#FF4444");
+    public static final int[] COLORS = new int[]{COLOR_BLUE, COLOR_VIOLET, COLOR_GREEN, COLOR_ORANGE, COLOR_RED};
+    private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+
     static final String ARG_INTERVAL = "interval";
     private ColumnChartView columnChartView;
     private ColumnChartData columnChartData;
@@ -38,22 +45,8 @@ public class RecordsFragment extends Fragment {
     private boolean hasLabelForSelected = true;
     private TextView textView;
     private ImageView imageView;
-    private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 
     private DailyStepViewModel dailyStepViewModel;
-
-    //TODO: this is just for testing, need to remove after integrating with live data
-//    private static final List<DailyStep> weeklyData = Arrays.asList(
-//            new DailyStep(Date.valueOf("2020-03-22"), 10000),
-//            new DailyStep(Date.valueOf("2020-03-23"), 6000),
-//            new DailyStep(Date.valueOf("2020-03-24"), 5000),
-//            new DailyStep(Date.valueOf("2020-03-25"), 7000),
-//            new DailyStep(Date.valueOf("2020-03-26"), 1000),
-//            new DailyStep(Date.valueOf("2020-03-27"), 1000),
-//            new DailyStep(Date.valueOf("2020-03-28"), 10000),
-//            new DailyStep(Date.valueOf("2020-03-29"), 8000),
-//            new DailyStep(Date.valueOf("2020-03-30"), 4000)
-//    );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,10 +54,6 @@ public class RecordsFragment extends Fragment {
         if (getActivity() != null) {
             dailyStepViewModel = ViewModelProviders.of(getActivity()).get(DailyStepViewModel.class);
         }
-   //uncomment it for adding data to database
-//        for (DailyStep record: weeklyData) {
-//            dailyStepViewModel.addDailyStep(record);
-//        }
     }
 
     @Override
@@ -102,7 +91,7 @@ public class RecordsFragment extends Fragment {
         imageView.setVisibility(View.VISIBLE);
     }
 
-    private void generateColumnData(List<DailyStepF> dataList, String interval) {
+    private void generateColumnData(List<DailyStep> dataList, String interval) {
         if (dataList.isEmpty()) {
             setNoDataView();
             return;
@@ -119,7 +108,7 @@ public class RecordsFragment extends Fragment {
         for (int i = 0; i < numColumns; i++) {
             values = new ArrayList<>();
             for (int j = 0; j < numSubColumns; j++) {
-                values.add(new SubcolumnValue(dataList.get(i).getStepCount(), ChartUtils.nextColor()));
+                values.add(new SubcolumnValue(dataList.get(i).getStepCount(), COLORS[i % COLORS.length]));
             }
             calendar.setTime(Date.valueOf(dataList.get(i).getDate()));
             if ("WEEKLY".equals(interval)) {
