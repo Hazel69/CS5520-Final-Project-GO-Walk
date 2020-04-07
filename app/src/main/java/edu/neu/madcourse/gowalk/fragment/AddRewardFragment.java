@@ -44,7 +44,7 @@ public class AddRewardFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_reward, null);
 
-        dialogBuilder.setTitle("Add your link")
+        dialogBuilder.setTitle("Add your reward")
                 .setView(view)
                 .setPositiveButton("Ok", null)
                 .setNegativeButton("Cancel", (dialog, which) -> dismiss());

@@ -31,8 +31,8 @@
     <string name="title_activity_rewards">RewardsActivity</string>
 
     <!-- Add reward hint -->
-    <string name="reward_name_hint">Please enter name of the reward</string>
-    <string name="reward_points_hint">Please enter points of the reward</string>
+    <string name="reward_name_hint">Name of the reward</string>
+    <string name="reward_points_hint">Points of the reward</string>
 
     <string name="reward_points">%d points</string>
 
