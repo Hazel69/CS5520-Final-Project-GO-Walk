@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +36,8 @@ public class RecordsFragment extends Fragment {
     private boolean hasAxes = true;
     private boolean hasLabels = false;
     private boolean hasLabelForSelected = true;
+    private TextView textView;
+    private ImageView imageView;
     private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 
     private DailyStepViewModel dailyStepViewModel;
@@ -69,6 +73,10 @@ public class RecordsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_records, container, false);
         columnChartView = rootView.findViewById(R.id.column_chart);
+        textView = rootView.findViewById(R.id.no_data_text_view);
+        imageView = rootView.findViewById(R.id.no_data_image);
+        textView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.INVISIBLE);
         return rootView;
     }
 
@@ -86,7 +94,20 @@ public class RecordsFragment extends Fragment {
         }
     }
 
+    private void setNoDataView() {
+        columnChartView.setVisibility(View.INVISIBLE);
+        textView.setText(R.string.no_chart_data);
+        textView.setVisibility(View.VISIBLE);
+        textView.setTextSize(20);
+        imageView.setVisibility(View.VISIBLE);
+    }
+
     private void generateColumnData(List<DailyStepF> dataList, String interval) {
+        if (dataList.isEmpty()) {
+            setNoDataView();
+            return;
+        }
+
         int numColumns = dataList.size();
         int numSubColumns = 1;
 
