@@ -30,7 +30,7 @@
         android:hyphenationFrequency="none"
         android:maxLines="1"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/dailyRankUserName"
         app:layout_constraintStart_toEndOf="@+id/icon_view"
