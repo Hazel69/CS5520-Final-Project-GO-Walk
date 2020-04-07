@@ -35,8 +35,8 @@ public class ReportActivity extends AppCompatActivity {
     private Button updateStepsBtn;
     private TextView dailyStepView;
     private EditText stepsEditText;
-    private String userId = "2";
-    private String username = "jessie";
+    private String userId = "1";
+    private String username = "ben";
     private String msg = "%s on %s: %d steps!";
 
     @Override

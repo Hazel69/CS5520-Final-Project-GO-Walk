@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -94,11 +95,10 @@ public class DailyRankActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                //TODO: need to use username
-                String userId = SharedPreferencesUtil.getUserId(getApplicationContext());
-                String msgTitle = String.format(getString(R.string.send_steps_title), userId);
+                String username = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("username", "A user");
+                String msgTitle = String.format(getString(R.string.send_steps_title), username);
                 //TODO: use actual steps
-                String msgBody = String.format(getString(R.string.send_steps_body), userId, 10000);
+                String msgBody = String.format(getString(R.string.send_steps_body), username, 10000);
                 FCMUtil.sendMessageToTopic(msgTitle, msgBody, getString(R.string.steps_topic));
             }
         }).start();
