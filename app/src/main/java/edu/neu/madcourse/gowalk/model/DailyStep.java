@@ -2,15 +2,15 @@ package edu.neu.madcourse.gowalk.model;
 
 import androidx.annotation.NonNull;
 
-public class DailyStepF {
+public class DailyStep {
     private String date;
     private int stepCount;
     private String userId;
     private String username;
 
-    public DailyStepF() {}
+    public DailyStep() {}
 
-    public DailyStepF(String userId, String username, String date, int stepCount) {
+    public DailyStep(String userId, String username, String date, int stepCount) {
         this.date = date;
         this.stepCount = stepCount;
         this.userId = userId;

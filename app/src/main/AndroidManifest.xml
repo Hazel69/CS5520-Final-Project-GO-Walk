@@ -3,6 +3,8 @@
     package="edu.neu.madcourse.gowalk">
     <!-- TODO: if not permitted, ask for user permission when app open -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".GoWalkApplication"
@@ -14,17 +16,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RewardsActivity"
-            android:label="@string/title_activity_rewards">
-        </activity>
+            android:label="@string/title_activity_rewards" />
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".activity.DailyRankActivity"
             android:label="@string/title_activity_daily_rank"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activity.ReportActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".StepCountingService" />
@@ -55,6 +53,12 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/design_default_color_background" />
+
+        <receiver android:name=".BootCompleteReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

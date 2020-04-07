@@ -1,13 +1,11 @@
 package edu.neu.madcourse.gowalk.activity;
 
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
-
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,22 +23,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
+import edu.neu.madcourse.gowalk.StepCountingService;
 import edu.neu.madcourse.gowalk.util.FCMUtil;
-
+import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
-import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.PieChartView;
 
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
 
-public class HomepageActivity extends AppCompatActivity implements SensorEventListener {
+public class HomepageActivity extends AppCompatActivity {
 
     private static final String TAG = HomepageActivity.class.getSimpleName();
     private PieChartView pieChartView;
-    private SensorManager sensorManager;
-    private Sensor stepCountSensor;
     private BottomNavigationView bottomNav;
+    private StepCountingService stepCountingService;
+    private ServiceConnection serviceConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,24 +51,10 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         int defaultCurrentStep = 0;
         populatePieChart(defaultCurrentStep, getDailyStepGoal(this));
 
-        //TODO: may move to service for tracking step when app is killed
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        stepCountSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (stepCountSensor != null) {
-            Log.v(TAG, "Register listener to SensorManager");
-            final boolean result = sensorManager.registerListener(this, stepCountSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            if (!result) {
-                Log.e(TAG, "Failed to register listener to step count sensor");
-            }
-        } else {
-            Log.e(TAG, "Failed to obtain step count sensor!!!");
-        }
-
         subscribeToTopic(getString(R.string.goal_completion_topic));
         subscribeToTopic(getString(R.string.steps_topic));
 
         bottomNav = findViewById(R.id.bottom_nav);
-
         bottomNav.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -90,8 +74,25 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
                     }
                 });
 
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d(TAG, "StepCountingService connected");
+                stepCountingService =
+                        ((StepCountingService.StepCountingBinder) service).getService();
+                stepCountingService.getCurrentStep().observe(HomepageActivity.this,
+                        result -> populatePieChart(result,
+                                SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this)));
+            }
 
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d(TAG, "StepCountingService disconnected");
+            }
+        };
 
+        bindService(new Intent(this, StepCountingService.class), serviceConnection,
+                BIND_AUTO_CREATE);
         //todo: these code are for testing, delete when implement the actual logic
     }
 
@@ -106,11 +107,6 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.homepage_menu, menu);
         return true;
-    }
-
-    public void directToReport(View view) {
-        Intent intent = new Intent(this, ReportActivity.class);
-        startActivity(intent);
     }
 
     public void directToDailyRanking() {
@@ -128,41 +124,24 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         startActivity(intent);
     }
 
-
     private void populatePieChart(int currentStep, int dailyGoal) {
-        currentStep = Math.min(currentStep, dailyGoal);
-        SliceValue completedSliceValue = new SliceValue(currentStep, ChartUtils.pickColor());
+        int displayCurrentStep = Math.min(currentStep, dailyGoal);
+        SliceValue completedSliceValue = new SliceValue(displayCurrentStep, Color.parseColor("#6AC199"));
         SliceValue remainingSliceValue =
-                new SliceValue(dailyGoal - currentStep, ChartUtils.pickColor());
+                new SliceValue(dailyGoal - displayCurrentStep, Color.parseColor("#FB6734"));
 
         List<SliceValue> values = new ArrayList<>();
         values.add(completedSliceValue);
         values.add(remainingSliceValue);
 
         PieChartData data = new PieChartData(values);
-        data.setHasLabels(true);
+        data.setHasLabelsOnlyForSelected(true);
+        data.setHasLabelsOutside(true);
         data.setHasCenterCircle(true);
-        data.setSlicesSpacing(24);
+        data.setSlicesSpacing(8);
         data.setCenterText1(String.valueOf(currentStep));
-
+        data.setCenterText1FontSize(30);
         pieChartView.setPieChartData(data);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        //TODO: should calculate the step for today, cause the sensor returns the number of steps taken by the user since the last reboot
-        //TODO: should update data in db and update data in Firebase
-        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            populatePieChart(Math.round(event.values[0]), getDailyStepGoal(this));
-            Log.d(TAG, "Updating step count to " + event.values[0] + " last updated timestamp is " + event.timestamp);
-        } else {
-            Log.e(TAG, "Receiving event from sensor type: " + event.sensor.getName());
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
     private void subscribeToTopic(String topic) {
@@ -188,4 +167,10 @@ public class HomepageActivity extends AppCompatActivity implements SensorEventLi
         }).start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        unbindService(serviceConnection);
+    }
 }

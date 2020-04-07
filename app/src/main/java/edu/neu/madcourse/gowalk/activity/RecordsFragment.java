@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import edu.neu.madcourse.gowalk.R;
-import edu.neu.madcourse.gowalk.model.DailyStepF;
+import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.viewmodel.DailyStepViewModel;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -91,7 +91,7 @@ public class RecordsFragment extends Fragment {
         imageView.setVisibility(View.VISIBLE);
     }
 
-    private void generateColumnData(List<DailyStepF> dataList, String interval) {
+    private void generateColumnData(List<DailyStep> dataList, String interval) {
         if (dataList.isEmpty()) {
             setNoDataView();
             return;

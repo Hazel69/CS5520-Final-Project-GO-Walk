@@ -6,8 +6,6 @@ import android.util.Log;
 
 import java.util.UUID;
 
-import edu.neu.madcourse.gowalk.util.SharedPreferencesUtil;
-
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.firstLaunched;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.isFirstLaunch;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
@@ -41,6 +39,6 @@ public class GoWalkApplication extends Application {
             firstLaunched(this);
         }
         //start back ground service to keep the sensor alive
-//        startService(new Intent(getBaseContext(), StepCountingService.class));
+        startForegroundService(new Intent(this, StepCountingService.class));
     }
 }
