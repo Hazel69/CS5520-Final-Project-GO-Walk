@@ -112,7 +112,7 @@ public class StepCountingService extends Service {
     };
 
     private int minutesSinceLastSyncWithFirebase = 0;
-    private final static int intervalForFirebaseSync = 1;
+    private final static int intervalForFirebaseSync = 10;
 
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
