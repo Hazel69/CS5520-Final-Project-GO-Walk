@@ -117,9 +117,9 @@ public class StepCountingService extends Service {
     private final BroadcastReceiver timeChangeListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ACTION_TIME_TICK) ||
-                    intent.getAction().equals(ACTION_TIME_CHANGED) ||
-                    intent.getAction().equals(ACTION_DATE_CHANGED)) {
+            if (ACTION_TIME_TICK.equals(intent.getAction()) ||
+                    ACTION_TIME_CHANGED.equals(intent.getAction()) ||
+                    ACTION_DATE_CHANGED.equals(intent.getAction())) {
                 Log.v(TAG, "Time change event received.");
 
                 long lastRecordTime =
@@ -187,6 +187,8 @@ public class StepCountingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.i(TAG, "StepCountingService starts.");
+
+        currentStepLiveData.setValue(currentStep);
         if (stepCountSensor != null) {
             Log.v(TAG, "Register listener to SensorManager");
 

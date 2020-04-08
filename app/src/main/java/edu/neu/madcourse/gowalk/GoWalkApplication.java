@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.firstLaunched;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.isFirstLaunch;
-import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setAccumulatePoints;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setDailyStepGoal;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setPointsGainedForDailyGoal;
 import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.setUserId;

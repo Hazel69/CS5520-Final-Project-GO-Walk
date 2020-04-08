@@ -34,7 +34,6 @@ import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
-import static edu.neu.madcourse.gowalk.util.SharedPreferencesUtil.getDailyStepGoal;
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -84,6 +83,7 @@ public class HomepageActivity extends AppCompatActivity {
                         ((StepCountingService.StepCountingBinder) service).getService();
                 stepCountingService.getCurrentStep().observe(HomepageActivity.this,
                         result -> {
+                            Log.d(TAG, "Receive get current step change");
                             populatePieChart(result,
                                     SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this));
                             SharedPreferencesUtil.setTodayStep(HomepageActivity.this, result);
