@@ -86,7 +86,14 @@ public class StepCountingService extends Service {
                 Log.d(TAG, "Updating step count to " + event.values[0] +
                         " last updated timestamp is " + event.timestamp);
 
+                if (!SharedPreferencesUtil.getHasReceivedFirstSensorEvent(StepCountingService.this)) {
+                    //if it is the first time the app is receiving event, set the step offset to the value
+                    stepOffset = (int) event.values[0];
+                    SharedPreferencesUtil.setKeyHasReceivedFirstSensorEvent(StepCountingService.this, true);
+                }
+
                 currentStep = (int) event.values[0] - stepOffset;
+
                 if (!hasSendGoalCompletionForToday && currentStep >= SharedPreferencesUtil.getDailyStepGoal(StepCountingService.this)) {
                     onDailyGoalComplete(currentStep);
                 }
@@ -257,7 +264,6 @@ public class StepCountingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        SharedPreferencesUtil.setStepOffset(this, -currentStep);
         SharedPreferencesUtil.setLastRecordTime(this, System.currentTimeMillis());
 
         sensorManager.unregisterListener(sensorEventListener, stepCountSensor);

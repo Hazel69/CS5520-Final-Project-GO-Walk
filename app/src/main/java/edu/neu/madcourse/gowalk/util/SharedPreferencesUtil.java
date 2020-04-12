@@ -2,14 +2,12 @@ package edu.neu.madcourse.gowalk.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import java.time.LocalDate;
 
 public final class SharedPreferencesUtil {
 
@@ -24,6 +22,7 @@ public final class SharedPreferencesUtil {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_LAST_RECORD_TIME = "last-record-time";
     private static final String KEY_TODAY_STEP = "today-step";
+    private static final String KEY_HAS_RECEIVED_FIRST_SENSOR_EVENT = "has-received-first-sensor-event";
 
     public static void setUserId(Context context, @Nullable String value) {
         SharedPreferences sharedPreferences =
@@ -128,6 +127,16 @@ public final class SharedPreferencesUtil {
 
     public static int getTodayStep(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_TODAY_STEP, 0);
+    }
+
+    public static boolean getHasReceivedFirstSensorEvent(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_HAS_RECEIVED_FIRST_SENSOR_EVENT, false);
+    }
+
+    public static void setKeyHasReceivedFirstSensorEvent(Context context, boolean val) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putBoolean(KEY_HAS_RECEIVED_FIRST_SENSOR_EVENT, val).apply();
     }
 
 }
