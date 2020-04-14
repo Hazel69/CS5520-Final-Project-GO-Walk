@@ -64,7 +64,7 @@ public class GoWalkFirebaseMessagingService extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_stat_ic_notification)
                         .setContentTitle(messageTitle)
                         .setContentText(messageBody)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                         .setAutoCancel(false)
                         .setSound(defaultSoundUri)
@@ -75,7 +75,7 @@ public class GoWalkFirebaseMessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(channelId, name, importance);
             channel.setDescription(description);
             channel.enableLights(true);
