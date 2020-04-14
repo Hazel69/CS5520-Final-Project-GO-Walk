@@ -20,9 +20,6 @@ import edu.neu.madcourse.gowalk.model.DailyStep;
 import edu.neu.madcourse.gowalk.repository.FirebaseQueryLiveData;
 
 public class DailyRankViewModel extends AndroidViewModel {
-    private static final Query mQuery =
-            FirebaseDatabase.getInstance().getReference().child("dailySteps")
-                    .child(LocalDate.now().toString()).orderByChild("stepCount");
     private List<DailyStep> mQueryDailyStepList;
 
     public DailyRankViewModel(@NonNull Application application) {
@@ -32,8 +29,10 @@ public class DailyRankViewModel extends AndroidViewModel {
 
     @NonNull
     public LiveData<List<DailyStep>> getDailyRankListLiveData() {
+        Query mQuery =
+                FirebaseDatabase.getInstance().getReference().child("dailySteps")
+                        .child(LocalDate.now().toString()).orderByChild("stepCount");
         FirebaseQueryLiveData mLiveData = new FirebaseQueryLiveData(mQuery);
-
         return Transformations.map(mLiveData, new Deserializer());
     }
 
