@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,29 +76,36 @@ public class HomepageActivity extends AppCompatActivity {
                     }
                 });
 
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.d(TAG, "StepCountingService connected");
-                stepCountingService =
-                        ((StepCountingService.StepCountingBinder) service).getService();
-                stepCountingService.getCurrentStep().observe(HomepageActivity.this,
-                        result -> {
-                            Log.d(TAG, "Receive get current step change");
-                            populatePieChart(result,
-                                    SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this));
-                            SharedPreferencesUtil.setTodayStep(HomepageActivity.this, result);
-                        });
-            }
+        PackageManager packageManager = getPackageManager();
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER)) {
+            Toast.makeText(this, "Sorry, the step counter sensor is not available on you phone!",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            serviceConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    Log.d(TAG, "StepCountingService connected");
+                    stepCountingService =
+                            ((StepCountingService.StepCountingBinder) service).getService();
+                    stepCountingService.getCurrentStep().observe(HomepageActivity.this,
+                            result -> {
+                                Log.d(TAG, "Receive get current step change");
+                                populatePieChart(result,
+                                        SharedPreferencesUtil.getDailyStepGoal(HomepageActivity.this));
+                                SharedPreferencesUtil.setTodayStep(HomepageActivity.this, result);
+                            });
+                }
 
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                Log.d(TAG, "StepCountingService disconnected");
-            }
-        };
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    Log.d(TAG, "StepCountingService disconnected");
+                }
+            };
 
-        bindService(new Intent(this, StepCountingService.class), serviceConnection,
-                BIND_AUTO_CREATE);
+            bindService(new Intent(this, StepCountingService.class), serviceConnection,
+                    BIND_AUTO_CREATE);
+        }
+
 
         //the system auto-grants the permission if API level is lower or equals to API Level 28
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
@@ -207,6 +215,8 @@ public class HomepageActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        unbindService(serviceConnection);
+        if (serviceConnection != null) {
+            unbindService(serviceConnection);
+        }
     }
 }
