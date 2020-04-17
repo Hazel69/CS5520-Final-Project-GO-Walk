@@ -12,7 +12,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +34,8 @@ public class DailyRankViewModel extends AndroidViewModel {
     public LiveData<List<DailyStep>> getDailyRankListLiveData() {
         Query mQuery =
                 FirebaseDatabase.getInstance().getReference().child("dailySteps")
-                        .child(LocalDate.now().toString()).orderByChild("stepCount");
+                        .child(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate().toString())
+                        .orderByChild("stepCount");
         FirebaseQueryLiveData mLiveData = new FirebaseQueryLiveData(mQuery);
         return Transformations.map(mLiveData, new Deserializer());
     }
